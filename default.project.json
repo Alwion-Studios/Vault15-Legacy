@@ -7,6 +7,14 @@
             "$className": "ReplicatedStorage",
             "$ignoreUnknownInstances": true,
             "$path": "ReplicatedStorage",
+            
+            "Remotes": {
+                "$className": "Folder",
+                "CodeAttemptEvent": {
+                    "$className": "RemoteFunction"
+                }
+            },
+
             "Packages": {
                 "$path": "Packages",
                 "$className": "Folder"
