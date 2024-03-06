@@ -1,0 +1,54 @@
+{
+    "name": "vault-15-legacy",
+    "servePort": 5532,
+    "tree": {
+        "$className": "DataModel",
+        "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
+            "$ignoreUnknownInstances": true,
+            "$path": "ReplicatedStorage",
+            "Packages": {
+                "$path": "Packages",
+                "$className": "Folder"
+            }
+        },
+
+        "ReplicatedFirst": {
+            "$className": "ReplicatedFirst",
+            "$ignoreUnknownInstances": true,
+            "$path": "ReplicatedFirst"
+        },
+
+        "ServerScriptService": {
+            "$className": "ServerScriptService",
+            "$ignoreUnknownInstances": true,
+            "$path": "ServerScriptService"
+        },
+
+        "ServerStorage": {
+            "$className": "ServerStorage",
+            "$ignoreUnknownInstances": true,
+            
+            "SoundStorage": {
+                "$className": "Folder"
+            },
+
+            "$path": "ServerStorage"
+        },
+
+        "StarterPlayer": {
+            "$className": "StarterPlayer",
+            "StarterCharacterScripts": {
+              "$className": "StarterCharacterScripts",
+              "$ignoreUnknownInstances": true,
+              "$path": "StarterPlayer/StarterCharacterScripts"
+            },
+            "StarterPlayerScripts": {
+              "$className": "StarterPlayerScripts",
+              "$ignoreUnknownInstances": true,
+              "$path": "StarterPlayer/StarterPlayerScripts"
+            },
+            "$ignoreUnknownInstances": true
+        }
+    }
+}
