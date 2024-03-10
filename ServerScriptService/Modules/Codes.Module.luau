@@ -48,7 +48,12 @@ function module.AttemptCode(player: Player, code: string)
 
     -- Get the user's session
     local _, session = aDS:GetSession(player.UserId, "UserData")
-    
+    local _, codes = session:GetKey("CodesRedeemed")
+
+    table.insert(codes, code)
+
+    session:SetKey({"Stats"}, "CodesRedeemed", codes)
+
     for name, reward in Codes[code] do 
         session:SetKey({"Stats"}, name, reward):await()
     end
