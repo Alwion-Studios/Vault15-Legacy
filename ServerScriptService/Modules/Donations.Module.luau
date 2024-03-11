@@ -10,17 +10,25 @@
                         ©️ 2024
 ]]
 
--- ROBLOX API
-local ServerStorage = game:GetService("ServerStorage")
+-- ROBLOX APIs
+local RS = game:GetService("ReplicatedStorage")
+local SS = game:GetService("ServerStorage")
+
+-- Remotes
+local remotes = RS:WaitForChild("Remotes")
 
 -- Imports
-local aDS = require(ServerStorage:WaitForChild("aDS").Objects:WaitForChild("Schema.Object"))
+local aDS = require(SS:WaitForChild("aDS"):WaitForChild("Core"))
 
-local UserInfo = aDS.Create("User", {
-  Caps = 0,
-  Bounty = 0,
-  CodesRedeemed = {},
-  LastCollect = 0,
-  LastStreak = 0,
-}, {})
-return UserInfo
+-- Module
+local module = {}
+
+function module.AttemptDonation(player: Player, targetUsername: String)
+
+end
+
+function module:Initialise()
+    remotes.DonationAttemptEvent.OnServerInvoke = self.AttemptCode
+end
+
+return module

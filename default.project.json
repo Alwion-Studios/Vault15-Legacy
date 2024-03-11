@@ -12,6 +12,12 @@
                 "$className": "Folder",
                 "CodeAttemptEvent": {
                     "$className": "RemoteFunction"
+                },
+                "DonationAttemptEvent": {
+                    "$className": "RemoteFunction"
+                },
+                "TeamSwitch": {
+                    "$className": "RemoteFunction"
                 }
             },
 

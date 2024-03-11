@@ -34,7 +34,7 @@ local function ModifyKey(data, path, key, value)
         for scannedName, _ in tbl do 
             local source = tbl[scannedName]
 
-            if source[key] then 
+            if type(source) == "table" and source[key] then
                -- print(`{key} Found`)
                 source[key] = value
                 --print(`{key} Set to {value}`)

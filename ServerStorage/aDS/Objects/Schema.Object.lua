@@ -71,6 +71,8 @@ Gets the default schema template and adds the user's customisations
 function Schema.Create(name: String, structure: table, options: table): Schema
     local self = setmetatable({}, Schema)
     
+    print(`{name}-{datastoreNamePrefix[isStudio]}`)
+
     self.Name = name
     self.Structure = structure
     self.DataStore = DS:GetDataStore(`{name}-{datastoreNamePrefix[isStudio]}`)
@@ -191,9 +193,10 @@ end
     self:SetKey({"Path", "to", "table"}, "Key", "Value")
 ]]
 
-function Schema:SetKey(path, key, value)
+function Schema:SetKey(key, value)
     return Promise.new(function(resolve, reject, onCancel)
-        self.Structure = TableFunctions.ModifyKey(self.Structure, path, key, value)
+        --self.Structure = TableFunctions.ModifyKey(self.Structure, path, key, value)
+        self.Structure[key] = value
         Core.Events.KeyChanged:Fire(self.Id, key, value)
         return resolve(true)
     end)
@@ -264,6 +267,7 @@ end
 
 function Schema:Save()
     if not self.Id then return false end
+    if isStudio then warn(`Running in Studio! Ignoring save request!`) return true end
 
     return Promise.new(function(resolve, reject, onCancel) 
         local success, err = pcall(function()

@@ -44,23 +44,31 @@ local module = {}
 
 function module.AttemptCode(player: Player, code: string)
     if not player or not code then return false end
-    if not Codes[code] then return false end
+    if not Codes[code] then return warn(`[CS] {player.Name} ({player.UserId}) attempted to use an incorrect code.`) end
 
     -- Get the user's session
-    local _, session = aDS:GetSession(player.UserId, "UserData")
-    local _, codes = session:GetKey("CodesRedeemed")
+    local _, session = aDS:GetSession(player.UserId, "User"):await()
+    local _, codesTbl = session:GetKey("CodesRedeemed"):await()
 
-    table.insert(codes, code)
+    if codesTbl[code] then return warn(`[CS] {player.Name} ({player.UserId}) attempted to reuse code {code}`)end
 
-    session:SetKey({"Stats"}, "CodesRedeemed", codes)
+    codesTbl[code] = true
 
-    for name, reward in Codes[code] do 
-        session:SetKey({"Stats"}, name, reward):await()
+    session:SetKey("CodesRedeemed", codesTbl)
+
+    for name, reward in Codes[code] do
+        print(name)
+        print(reward)
+        session:SetKey(name, reward):await()
     end
+
+    session:Save()
+    print(aDS:GetSession(player.UserId, "User"):await())
+    return true
 end
 
 function module:Initialise()
-    remotes.CodeAttemptEvent.OnServerInvoke:Connect(self.AttemptCode)
+    remotes.CodeAttemptEvent.OnServerInvoke = self.AttemptCode
 end
 
 return module

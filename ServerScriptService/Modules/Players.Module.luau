@@ -11,7 +11,11 @@
 ]]
 
 -- ROBLOX API
-local ServerStorage = game:GetService("ServerStorage")
+local RS = game:GetService("ReplicatedStorage")
+local TS = game:GetService("Teams")
+
+-- Remotes
+local remotes = RS:WaitForChild("Remotes")
 
 -- Imports
 local aDS_Handler = require(script.Parent["aDS.Module"])
@@ -19,10 +23,10 @@ local aDS_Handler = require(script.Parent["aDS.Module"])
 -- Blacklist
 local blacklist = {
   [89676078] = {
-    ["Reason"] = "Blacklisted due to indecent communications. Please contact appeals if you believe this was done unfairly."
+    ["Reason"] = "Blacklisted due to our policy on indecent communications. Please contact appeals if you believe this was done unfairly."
   },
   [1178239976] = {
-    ["Reason"] = "Blacklisted due to indecent communications. Please contact appeals if you believe this was done unfairly."
+    ["Reason"] = "Blacklisted due to our policy on indecent communications. Please contact appeals if you believe this was done unfairly."
   }
 }
 
@@ -37,7 +41,21 @@ function players.HandleJoin(player: Player)
   end
 
   -- Configure a Datastore
-  aDS_Handler.OnJoin(player)
+  aDS_Handler:OnJoin(player)
+end
+
+function players:Initialise()
+  -- Handle Remotes
+  remotes.TeamSwitch.OnServerInvoke = function(player, teamName)
+    if not TS[teamName] then return false end
+    local team = TS[teamName]
+    
+    if team:GetAttribute("GroupId") and not player:IsInGroup(team:GetAttribute("GroupId")) then return false end
+    if team:GetAttribute("GroupId") and team:GetAttribute("RankId") and not player:GetRankInGroup(team:GetAttribute("GroupId")) then return false end
+
+    player.Team = team
+    return true
+  end
 end
 
 return players
