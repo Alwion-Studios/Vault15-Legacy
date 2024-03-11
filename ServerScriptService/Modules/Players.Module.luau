@@ -54,6 +54,7 @@ function players:Initialise()
       warn(`{player.Name} is not in group {team:GetAttribute("GroupId")}!`)
       return false
     end
+    
     if team:GetAttribute("GroupId") and team:GetAttribute("RankId") and (player:GetRankInGroup(team:GetAttribute("GroupId")) < team:GetAttribute("RankId"))  then
       warn(`{player.Name} does not have the required rank to join this team!`)
       return false
