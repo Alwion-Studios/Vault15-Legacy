@@ -50,20 +50,27 @@ function module.AttemptCode(player: Player, code: string)
     local _, session = aDS:GetSession(player.UserId, "User"):await()
     local _, codesTbl = session:GetKey("CodesRedeemed"):await()
 
-    if codesTbl[code] then return warn(`[CS] {player.Name} ({player.UserId}) attempted to reuse code {code}`)end
+    if not session then 
+        warn(`[CS] Could not get {player.Name}'s session!`)
+        return false
+    end
+
+    if codesTbl[code] then 
+        warn(`[CS] {player.Name} ({player.UserId}) attempted to reuse code {code}`)
+        return false
+    end
 
     codesTbl[code] = true
 
-    session:SetKey("CodesRedeemed", codesTbl)
+    session:SetKey({}, "CodesRedeemed", codesTbl)
 
     for name, reward in Codes[code] do
-        print(name)
-        print(reward)
-        session:SetKey(name, reward):await()
+        local status, _ = session:SetKey({}, name, reward):await()
+        if status then print(`[CS] Granted {player.Name} {reward} {name}`) end
     end
 
+    print(`[CS] Successfully gave {player.Name} their reward(s)!`)
     session:Save()
-    print(aDS:GetSession(player.UserId, "User"):await())
     return true
 end
 

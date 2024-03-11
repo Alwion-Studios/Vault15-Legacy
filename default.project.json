@@ -18,6 +18,15 @@
                 },
                 "TeamSwitch": {
                     "$className": "RemoteFunction"
+                },
+                "DoorTrigger": {
+                    "$className": "RemoteEvent"
+                },
+                "SignTrigger": {
+                    "$className": "RemoteEvent"
+                },
+                "RequestDoorDetails": {
+                    "$className": "RemoteFunction"
                 }
             },
 
@@ -43,8 +52,11 @@
             "$className": "ServerStorage",
             "$ignoreUnknownInstances": true,
             
-            "SoundStorage": {
-                "$className": "Folder"
+            "Events": {
+                "$className":"Folder",
+                "Kill": {
+                    "$className": "BindableEvent"
+                }
             },
 
             "$path": "ServerStorage"

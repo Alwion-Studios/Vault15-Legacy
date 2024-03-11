@@ -59,7 +59,7 @@ end
 function module:HandleKeyChange(player: Player, key, value)
   -- Get the Player's DataValue Folder
   local plrValues = player:WaitForChild("DataValues")
-  if not plrValues then return false end
+  if not plrValues or not plrValues:FindFirstChild(key) then return false end
   
   -- Get the Associated Key
   local dataKey = plrValues:WaitForChild(key)

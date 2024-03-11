@@ -193,10 +193,9 @@ end
     self:SetKey({"Path", "to", "table"}, "Key", "Value")
 ]]
 
-function Schema:SetKey(key, value)
+function Schema:SetKey(path, key, value)
     return Promise.new(function(resolve, reject, onCancel)
-        --self.Structure = TableFunctions.ModifyKey(self.Structure, path, key, value)
-        self.Structure[key] = value
+        self.Structure = TableFunctions.ModifyKey(self.Structure, path, key, value)
         Core.Events.KeyChanged:Fire(self.Id, key, value)
         return resolve(true)
     end)

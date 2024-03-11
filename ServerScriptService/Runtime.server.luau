@@ -19,6 +19,8 @@ local ServerStorage = game:GetService("ServerStorage")
 local player_module = require(script.Parent.Modules["Players.Module"])
 local codes_module = require(script.Parent.Modules["Codes.Module"])
 local ads_module = require(script.Parent.Modules["aDS.Module"])
+local donations_module = require(script.Parent.Modules["Donations.Module"])
+local doors_module = require(script.Parent.Modules["Doors.Module"])
 local aDS = require(ServerStorage:WaitForChild("aDS"):WaitForChild("Core"))
 
 -- Remotes
@@ -28,6 +30,8 @@ local remotes = RS:WaitForChild("Remotes")
 codes_module:Initialise()
 player_module:Initialise()
 ads_module:Initialise()
+donations_module:Initialise()
+doors_module:Initialise()
 
 -- Handle aDS Schema Initialisation
 aDS.Initialise(script.Parent.Schemas)
