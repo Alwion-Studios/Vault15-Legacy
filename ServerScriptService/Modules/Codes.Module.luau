@@ -41,6 +41,7 @@ local Codes = {
 
 -- Module
 local module = {}
+module.__index = module
 
 function module.AttemptCode(player: Player, code: string)
     if not player or not code then return false end

@@ -25,6 +25,7 @@ local dataValues = {
 
 -- Module
 local module = {}
+module.__index = module
 
 function module:OnJoin(player: Player)
   print(`[aDS] Creating a session for {player.Name}`)

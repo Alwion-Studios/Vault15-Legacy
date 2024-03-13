@@ -32,6 +32,7 @@ local blacklist = {
 
 -- Module
 local players = {}
+players.__index = players
 
 function players.HandleJoin(player: Player)
   -- Handle the Blacklist

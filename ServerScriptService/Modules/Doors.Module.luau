@@ -23,23 +23,23 @@ local Remotes = _RS.Remotes
 --Door Object
 local door = require(_SS:WaitForChild("Objects"):WaitForChild("Door.Object"))
 
-local DoorService = {
+local module = {
     Doors = {};
 }
+module.__index = module
 
-function DoorService.GetDoor(_, name)
-    return DoorService.Doors[name]
+function module.GetDoor(_, name)
+    return module.Doors[name]
 end
 
-function DoorService:Initialise()
+function module:Initialise()
     if not self.Doors or #self.Doors <= 0 then
         for _, instance in pairs(_CS:GetTagged("Door")) do
-            instance = instance.Parent
             --If a door with the name already exists, do not add it to the table of doors
-            if self.Doors[instance.Name] then print(`[DS] {instance.Parent.Name} already exists`) continue end
+            if self.Doors[instance.Name] then print(`[DS] {instance.Name} already exists`) continue end
 
             --If a door doesn't exist
-            print(`[DS] Initialising {instance.Parent.Name}`)
+            print(`[DS] Initialising {instance.Name}`)
             self.Doors[instance.Name] = door.New(instance:GetAttribute("Category"), instance, {["isLocked"]=instance:GetAttribute("isLocked") or false})
         end
     end
@@ -47,4 +47,4 @@ function DoorService:Initialise()
     Remotes.RequestDoorDetails.OnServerInvoke = self.GetDoor
 end
 
-return DoorService
+return module

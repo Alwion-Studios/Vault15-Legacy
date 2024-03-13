@@ -23,6 +23,7 @@ local aDS = require(SS:WaitForChild("aDS"):WaitForChild("Core"))
 
 -- Module
 local module = {}
+module.__index = module
 
 function module.AttemptDonation(player: Player, targetUsername: string, capsToDonate)
   if player.Name == targetUsername then 
