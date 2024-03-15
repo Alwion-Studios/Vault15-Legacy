@@ -27,6 +27,12 @@
                 },
                 "RequestDoorDetails": {
                     "$className": "RemoteFunction"
+                },
+                "AttemptPurchase": {
+                    "$className": "RemoteFunction"
+                },
+                "ShopGUIOpen": {
+                    "$className": "BindableEvent"
                 }
             },
 
