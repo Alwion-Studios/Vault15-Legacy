@@ -26,7 +26,7 @@ local module = {}
 module.__index = module
 
 function module.AttemptDonation(player: Player, targetUsername: string, capsToDonate)
-  if player.Name == targetUsername then 
+  if player.Name == targetUsername and not RS:FindFirstChild("DisableUsernameChecks") or RS:FindFirstChild("DisableUsernameChecks").Value ~= true then
     warn(`[DS] {player.Name} is attempting to donate to themself`)
     return false 
   end

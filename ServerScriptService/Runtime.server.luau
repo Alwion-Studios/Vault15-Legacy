@@ -16,6 +16,7 @@ local RS = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 
 -- Imports
+local debug_module = require(script.Parent.Modules["Debug.Module"])
 local player_module = require(script.Parent.Modules["Players.Module"])
 local codes_module = require(script.Parent.Modules["Codes.Module"])
 local ads_module = require(script.Parent.Modules["aDS.Module"])
@@ -27,6 +28,7 @@ local aDS = require(ServerStorage:WaitForChild("aDS"):WaitForChild("Core"))
 local remotes = RS:WaitForChild("Remotes")
 
 -- Initialise all Modules
+debug_module:Initialise():await()
 codes_module:Initialise()
 player_module:Initialise()
 ads_module:Initialise()
