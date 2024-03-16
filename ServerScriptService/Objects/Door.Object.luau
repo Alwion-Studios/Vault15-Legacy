@@ -156,14 +156,16 @@ function Door.New(category, instance, opt)
         self.Sign:ChangeStatus(IsLockedStatusStrings[self.IsLocked])
     end
 
-    if opt["isLocked"] then self.isLocked = opt["isLocked"] end
+    if opt["isLocked"] then self.IsLocked = opt["isLocked"] end
 
     -- TEMPORARY, TO BE IMPROVED DURING POLISH
-    if self.Instance:WaitForChild("Up"):FindFirstChild("ClickPart") then
-        print(`[DO] {self.Instance.Name} has a ClickPart that a ProximityPrompt can be attached to!`)
+    local ClickPart = self.Instance:WaitForChild("ClickPart", 5) :: ObjectValue?
+
+    if ClickPart and ClickPart.Value then
+       print(`[DO] {self.Instance.Name} has a ClickPart that a ProximityPrompt can be attached to!`)
 
         local doorPrompt = RS:WaitForChild("Storage"):WaitForChild("DoorPrompt"):Clone()
-        doorPrompt.Parent = self.Instance:WaitForChild("Up").ClickPart
+        doorPrompt.Parent = ClickPart.Value
         self.PromptInstance = doorPrompt
     else
         print(`[DO] {self.Instance.Name} does not have a ClickPart to attach a ProximityPrompt to!`)
