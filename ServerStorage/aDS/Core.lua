@@ -98,8 +98,8 @@ function Core:Shutdown(): Promise
 
     for name, schema in pairs(self.ActiveSessions) do 
         for id, session in pairs(schema) do 
-            session:Close()
-            session = nil
+            session:Close():await()
+            --session = nil
             print(`[{self.Product}] Closed Serialised Schema ({name}) Session ({id})`)
         end 
     end

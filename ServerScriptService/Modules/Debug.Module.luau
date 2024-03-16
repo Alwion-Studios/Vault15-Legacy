@@ -27,49 +27,54 @@ local remotes = RS:WaitForChild("Remotes")
 local aDS = require(SS:WaitForChild("aDS"):WaitForChild("Core"))
 
 -- Module
-local module = {}
+local module = {
+    Toggles = {
+        ["DisableUsernameChecks"] = false,
+        ["DisableDoorPermissions"] = false,
+    }
+}
 module.__index = module
 
+local function CheckIfPlayerHasSufficientPermissions(player: Player)
+    if player and player:IsInGroup(15603595) then return true end
+
+    return false
+end
+
+function module:RemoteEventHandler(player: Player, toggle: string)
+    if not CheckIfPlayerHasSufficientPermissions(player) then return false end
+
+    if self.Toggles[toggle] == false then
+        warn(`[DBS] {toggle} Enabled!`)
+        self.Toggles[toggle] = true
+    else
+        warn(`[DBS] {toggle} Disabled!`)
+        self.Toggles[toggle] = false
+    end
+end
+
 function module:Initialise()
-    return Promise.new(function(resolve, reject, onCancel)
-        if not _RS:IsStudio() then return reject(false) end
-        print(`[DBS] Debug Service Active!`)
+    if not _RS:IsStudio() then return false end
+    print(`[DBS] Debug Service Active!`)
 
-        -- Turn Debug Mode On
-        local debugValue = Instance.new("BoolValue")
-        debugValue.Name = "DebugMode"
-        debugValue.Value = true
-        debugValue.Parent = RS
+    -- Turn Debug Mode On
+    local debugValue = Instance.new("BoolValue")
+    debugValue.Name = "DebugMode"
+    debugValue.Value = true
+    debugValue.Parent = RS
 
-        -- Create a folder for Debug Remotes
-        local debugFlr = Instance.new("Folder")
-        debugFlr.Name = "Debug"
-        debugFlr.Parent = remotes
+    -- Get Debug Remotes Folder
+    local debugRemotes = remotes:WaitForChild("DebugRemotes")
 
-        -- Initialise DEBUG Remotes
-        local disableUsernameChecks = Instance.new("RemoteEvent")
-        disableUsernameChecks.Name = "DisableUsernameChecks"
-        disableUsernameChecks.Parent = debugFlr
-
-        disableUsernameChecks.OnClientEvent:Connect(function(plr)
-            if not RS:FindFirstChild("DisableUsernameChecks") then
-                local usernameChecks = Instance.new("BoolValue")
-                usernameChecks.Name = "DisableUsernameChecks"
-                usernameChecks.Value = true
-                usernameChecks.Parent = RS
-            end
-
-            if RS:FindFirstChild("DisableUsernameChecks").Value == false then
-                warn(`[DBS] Username Checks Disabled!`)
-                RS:FindFirstChild("DisableUsernameChecks").Value = true
-            else
-                warn(`[DBS] Username Checks Enabled!`)
-                RS:FindFirstChild("DisableUsernameChecks").Value = false
-            end
+    -- Create DisableUsernameChecks Remote
+    for name, option in self.Toggles do 
+        local Event = Instance.new("RemoteEvent")
+        Event.Name = name
+        Event.Parent = debugRemotes
+        Event.OnServerEvent:Connect(function(player: Player)
+            self:RemoteEventHandler(player, name)
         end)
-
-        resolve(true)
-    end)
+    end
 end
 
 return module

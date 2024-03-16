@@ -389,9 +389,9 @@ end
 ]]
 
 function Schema:Close(refuseSave)
-    if refuseSave then return false end
-    
     return Promise.new(function(resolve, reject, onCancel) 
+        if refuseSave then reject(false) end
+
         self["Metadata"] = nil
         local status, _ = self:Save():await()
         if not status then return resolve(false) end

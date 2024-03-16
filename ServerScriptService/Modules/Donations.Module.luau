@@ -20,15 +20,16 @@ local remotes = RS:WaitForChild("Remotes")
 
 -- Imports
 local aDS = require(SS:WaitForChild("aDS"):WaitForChild("Core"))
+local debug_module = require(script.Parent["Debug.Module"])
 
 -- Module
 local module = {}
 module.__index = module
 
 function module.AttemptDonation(player: Player, targetUsername: string, capsToDonate)
-  if player.Name == targetUsername and not RS:FindFirstChild("DisableUsernameChecks") or RS:FindFirstChild("DisableUsernameChecks").Value ~= true then
-    warn(`[DS] {player.Name} is attempting to donate to themself`)
-    return false 
+  if player.Name == targetUsername and not debug_module.Toggles.DisableUsernameChecks then
+    warn(`[DS] {player.Name} is attempting to donate to their own character!`)
+    return false
   end
 
   if not capsToDonate then

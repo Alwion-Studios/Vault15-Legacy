@@ -43,7 +43,7 @@ function module:OnJoin(player: Player)
 
   -- Create a Folder in the Player's Instance
   local newFolder = Instance.new("Folder")
-  newFolder.Name = "DataValues"
+  newFolder.Name = "SaveFile"
   newFolder.Parent = player
 
   for name, value in session["Structure"] do 
@@ -59,7 +59,7 @@ end
 
 function module:HandleKeyChange(player: Player, key, value)
   -- Get the Player's DataValue Folder
-  local plrValues = player:WaitForChild("DataValues")
+  local plrValues = player:WaitForChild("SaveFile")
   if not plrValues or not plrValues:FindFirstChild(key) then return false end
   
   -- Get the Associated Key
