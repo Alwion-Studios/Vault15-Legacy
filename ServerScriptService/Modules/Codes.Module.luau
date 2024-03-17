@@ -48,7 +48,7 @@ function module.AttemptCode(player: Player, code: string)
     if not Codes[code] then return warn(`[CS] {player.Name} ({player.UserId}) attempted to use an incorrect code.`) end
 
     -- Get the user's session
-    local _, session = aDS:GetSession(player.UserId, "User"):await()
+    local _, session = aDS:GetSession(player.UserId, "UserData"):await()
     local _, codesTbl = session:GetKey("CodesRedeemed"):await()
 
     if not session then 

@@ -16,8 +16,8 @@ local ServerStorage = game:GetService("ServerStorage")
 -- Imports
 local aDS = require(ServerStorage:WaitForChild("aDS").Objects:WaitForChild("Schema.Object"))
 
-local UserInfo = aDS.Create("User", {
-  Caps = 0,
+local UserInfo = aDS.Create("UserData", {
+  Caps = 15,
   Bounty = 0,
   CodesRedeemed = {},
   LastCollect = 0,

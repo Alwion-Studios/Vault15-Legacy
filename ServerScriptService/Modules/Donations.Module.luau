@@ -26,7 +26,7 @@ local debug_module = require(script.Parent["Debug.Module"])
 local module = {}
 module.__index = module
 
-function module.AttemptDonation(player: Player, targetUsername: string, capsToDonate)
+function module.AttemptDonation(player: Player, targetUsername: string, capsToDonate: number)
   if player.Name == targetUsername and not debug_module.Toggles.DisableUsernameChecks then
     warn(`[DS] {player.Name} is attempting to donate to their own character!`)
     return false
@@ -36,6 +36,7 @@ function module.AttemptDonation(player: Player, targetUsername: string, capsToDo
     warn(`[DS] capsToDonate was not defined!`)
     return false
   end
+  capsToDonate = math.round(capsToDonate)
 
   if not targetUsername or not PS:FindFirstChild(targetUsername) then
     warn(`[DS] {targetUsername} could not be found!`)
@@ -43,10 +44,10 @@ function module.AttemptDonation(player: Player, targetUsername: string, capsToDo
   end
 
   -- Get the Player's Session
-  local _, session = aDS:GetSession(player.UserId, "User"):await()
+  local _, session = aDS:GetSession(player.UserId, "UserData"):await()
 
   -- Get the Target's Session
-  local _, targetSession = aDS:GetSession(PS[targetUsername].UserId, "User"):await()
+  local _, targetSession = aDS:GetSession(PS[targetUsername].UserId, "UserData"):await()
 
   if not session or not targetSession then
     warn(`[DS] Could not get a session for one (or more) of the defined players`)

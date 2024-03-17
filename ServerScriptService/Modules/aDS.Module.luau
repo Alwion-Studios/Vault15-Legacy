@@ -31,7 +31,7 @@ function module:OnJoin(player: Player)
   print(`[aDS] Creating a session for {player.Name}`)
 
   -- Get the Default Schema for Players
-  local _, schema = aDS:GetSchema("User"):await()
+  local _, schema = aDS:GetSchema("UserData"):await()
   
   -- Create a Session for the User
   local status, session = aDS:CreateSession(player.UserId, schema):await()
