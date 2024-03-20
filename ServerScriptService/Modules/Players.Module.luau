@@ -13,6 +13,7 @@
 -- ROBLOX API
 local RS = game:GetService("ReplicatedStorage")
 local TS = game:GetService("Teams")
+local BS = game:GetService("BadgeService")
 
 -- Remotes
 local remotes = RS:WaitForChild("Remotes")
@@ -35,6 +36,10 @@ local players = {}
 players.__index = players
 
 function players.HandleJoin(player: Player)
+  pcall(function()
+    return BS:AwardBadge(player.UserId, 1701232606423157)
+  end)
+
   -- Handle the Blacklist
   if blacklist[player.UserId] then
     player:Kick(blacklist[player.UserId].Reason)
