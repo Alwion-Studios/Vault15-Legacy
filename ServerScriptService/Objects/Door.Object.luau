@@ -33,6 +33,8 @@ local Door = {
     TimeToComplete = 1;
     TimeToWait = 5;
     IsLocked = false;
+    RankId = false;
+    GroupId = false;
     IsOpen = false;
     Debounce = false;
     Positions = nil;
@@ -71,6 +73,15 @@ function Door:Open()
                 ["Down"] = DownCalculation;
                 ["Up"] = UpCalculation;
             };
+        elseif self.Category == "VaultBorderDoor" then
+            local Store = require(stores:WaitForChild(`{self.Category}.Store`))
+
+            local LeftCalculation = (CFrame.new(self.Instance.PrimaryPart.Position.X+Store["Positions"]["Left"], self.Instance.PrimaryPart.Position.Y, self.Instance.PrimaryPart.Position.Z) 
+            * CFrame.Angles(math.rad(self.Instance.PrimaryPart.Orientation.X), math.rad(self.Instance.PrimaryPart.Orientation.Y), math.rad(self.Instance.PrimaryPart.Orientation.Z)))
+
+            self.Positions["Open"] = {
+                ["Left"] = LeftCalculation;
+            };
         end
         --DoorService.Doors[self.Instance.Name] = self
     end
@@ -96,6 +107,13 @@ function Door:Close()
                 ["Down"] = DownCalculation;
                 ["Up"] = UpCalculation;
             };
+        elseif self.Category == "VaultBorderDoor" then
+            local LeftCalculation = (CFrame.new(self.Instance.PrimaryPart.Position.X, self.Instance.PrimaryPart.Position.Y, self.Instance.PrimaryPart.Position.Z) 
+            * CFrame.Angles(math.rad(self.Instance.PrimaryPart.Orientation.X), math.rad(self.Instance.PrimaryPart.Orientation.Y), math.rad(self.Instance.PrimaryPart.Orientation.Z)))
+
+            self.Positions["Closed"] = {
+                ["Left"] = LeftCalculation;
+            };
         end
         --DoorService.Doors[self.Instance.Name] = self
     end
@@ -105,8 +123,11 @@ function Door:Close()
     return true
 end
 
-function Door:HandleTrigger() 
+function Door:HandleTrigger(player: Player)
     if self.Debounce or self.IsLocked then return false end
+
+    if self.GroupId and not player:IsInGroup(self.GroupId) then warn(`[DS] {player.Name} is not in group {self.GroupId}!`) return false end
+    if self.GroupId and self.RankId and (player:GetRankInGroup(self.GroupId) < self.RankId) then warn(`[DS] {player.Name} does not have rank {self.RankId} in group {self.GroupId}!`) return false end
 
     --Tells the System to enable the "IsOpening" debounce, disable the door's prompt and trigger the door open animation
     self.Debounce = true
@@ -147,6 +168,8 @@ function Door.New(category, instance, opt)
     self.Instance = instance
     self.PromptInstance = nil
     self.IsLocked = opt["isLocked"]
+    self.RankId = opt["rankId"]
+    self.GroupId = opt["groupId"]
     self.Positions = {}
 
     -- TEMPORARY, TO BE IMPROVED DURING POLISH
@@ -174,8 +197,8 @@ function Door.New(category, instance, opt)
 
     --Proximity Prompt Handling
     self.PromptInstance.ActionText = defaultProximityStrings[self.IsLocked]
-    self.PromptInstance.Triggered:Connect(function() 
-        self.PendingTrigger = pcall(self:HandleTrigger(), self)
+    self.PromptInstance.Triggered:Connect(function(player)
+        self.PendingTrigger = pcall(self:HandleTrigger(player), self)
     end)
 
     return self

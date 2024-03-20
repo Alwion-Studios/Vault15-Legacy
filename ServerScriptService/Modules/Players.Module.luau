@@ -63,6 +63,8 @@ function players:Initialise()
 
     print(`{player.Name} has joined {teamName}`)
     player.Team = team
+    player:LoadCharacter()
+    
     return true
   end
 end

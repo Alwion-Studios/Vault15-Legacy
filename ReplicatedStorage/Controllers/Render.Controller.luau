@@ -41,16 +41,20 @@ end
 function HandleDoorAnimation(instance, animation)
     if not instance then return false end 
 
-    print(animation)
-    local UP = instance:WaitForChild("Up")
-    local UPRoot = UP.PrimaryPart
-    local DOWN = instance:WaitForChild("Down")
-    local DOWNRoot = DOWN.PrimaryPart
+    if instance:GetAttribute("Category") == "VaultInteriorDoor" then
+        local UP = instance:WaitForChild("Up")
+        local UPRoot = UP.PrimaryPart
+        local DOWN = instance:WaitForChild("Down")
+        local DOWNRoot = DOWN.PrimaryPart
 
-    if not UPRoot or not DOWNRoot then return false end
+        if not UPRoot or not DOWNRoot then return false end
 
-    Tween(UPRoot, .75, "Linear", "Out", false, {CFrame = animation["Up"]})
-    Tween(DOWNRoot, .75, "Linear", "Out", false, {CFrame = animation["Down"]})
+        Tween(UPRoot, .75, "Linear", "Out", false, {CFrame = animation["Up"]})
+        Tween(DOWNRoot, .75, "Linear", "Out", false, {CFrame = animation["Down"]})
+    elseif instance:GetAttribute("Category") == "VaultBorderDoor" then
+        local Part = instance.PrimaryPart
+        Tween(Part, .75, "Linear", "Out", false, {CFrame = animation["Left"]})
+    end
 end
 
 function HandleSignAnimation(instance, colour)
@@ -72,7 +76,6 @@ end
 
 function DoorsController:Initialise()
     function onRefresh(instance)
-        instance = instance.Parent
         local res = Remotes.RequestDoorDetails:InvokeServer(instance.Name)
         if not res then return false end
 

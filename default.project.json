@@ -15,6 +15,14 @@
                     "$className": "Folder"
                 },
 
+                "LobbyRemotes": {
+                    "$className": "Folder",
+                    
+                    "RefreshLobby": {
+                        "$className": "RemoteEvent"
+                    }
+                },
+
                 "CodeAttemptEvent": {
                     "$className": "RemoteFunction"
                 },
@@ -30,6 +38,18 @@
                 "SignTrigger": {
                     "$className": "RemoteEvent"
                 },
+                "FireWeapon": {
+                    "$className": "RemoteEvent"
+                },
+                "ReloadWeapon": {
+                    "$className": "RemoteEvent"
+                },
+                "ShotFired": {
+                    "$className": "RemoteEvent"
+                },
+                "HitMarker": {
+                    "$className": "RemoteEvent"
+                },
                 "RequestDoorDetails": {
                     "$className": "RemoteFunction"
                 },
@@ -38,6 +58,12 @@
                 },
                 "ShopGUIOpen": {
                     "$className": "BindableEvent"
+                },
+                "LightingInitialised": {
+                    "$className": "BindableEvent"
+                },
+                "NotifyUser": {
+                    "$className": "RemoteEvent"
                 }
             },
 

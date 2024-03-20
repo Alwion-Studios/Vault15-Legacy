@@ -22,12 +22,14 @@ local codes_module = require(script.Parent.Modules["Codes.Module"])
 local ads_module = require(script.Parent.Modules["aDS.Module"])
 local donations_module = require(script.Parent.Modules["Donations.Module"])
 local doors_module = require(script.Parent.Modules["Doors.Module"])
+local server_module = require(script.Parent.Modules["Server.Module"])
 local aDS = require(ServerStorage:WaitForChild("aDS"):WaitForChild("Core"))
 
 -- Remotes
 local remotes = RS:WaitForChild("Remotes")
 
 -- Initialise all Modules
+server_module:Initialise():await()
 debug_module:Initialise()
 player_module:Initialise()
 codes_module:Initialise()

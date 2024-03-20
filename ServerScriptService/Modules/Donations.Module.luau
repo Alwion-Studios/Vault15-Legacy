@@ -17,6 +17,7 @@ local PS = game:GetService("Players")
 
 -- Remotes
 local remotes = RS:WaitForChild("Remotes")
+local notifyRemote = remotes.NotifyUser
 
 -- Imports
 local aDS = require(SS:WaitForChild("aDS"):WaitForChild("Core"))
@@ -32,16 +33,16 @@ function module.AttemptDonation(player: Player, targetUsername: string, capsToDo
     return false
   end
 
+  if not targetUsername or not PS:FindFirstChild(targetUsername) then
+    warn(`[DS] {targetUsername} could not be found!`)
+    return false
+  end
+
   if not capsToDonate then
     warn(`[DS] capsToDonate was not defined!`)
     return false
   end
   capsToDonate = math.round(capsToDonate)
-
-  if not targetUsername or not PS:FindFirstChild(targetUsername) then
-    warn(`[DS] {targetUsername} could not be found!`)
-    return false
-  end
 
   -- Get the Player's Session
   local _, session = aDS:GetSession(player.UserId, "UserData"):await()
@@ -65,6 +66,9 @@ function module.AttemptDonation(player: Player, targetUsername: string, capsToDo
 
   if status and targetStatus then 
     print(`[DS] {player.Name} gave {targetUsername} {capsToDonate} caps!`)
+
+    notifyRemote:FireClient(PS[targetUsername], "Donation", `{player.Name} has donated {capsToDonate} caps!`)
+
     return true
   else
     warn(`[DS] Something went wrong with this transaction! Attempting to Reverse`)

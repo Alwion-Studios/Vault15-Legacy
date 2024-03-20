@@ -40,7 +40,7 @@ function module:Initialise()
 
             --If a door doesn't exist
             print(`[DS] Initialising {instance.Name}`)
-            self.Doors[instance.Name] = door.New(instance:GetAttribute("Category"), instance, {["isLocked"]=instance:GetAttribute("isLocked") or false})
+            self.Doors[instance.Name] = door.New(instance:GetAttribute("Category"), instance, {["isLocked"]=instance:GetAttribute("isLocked") or false, ["groupId"]=instance:GetAttribute("groupId") or false, ["rankId"]=instance:GetAttribute("rankId") or false})
         end
     end
 
