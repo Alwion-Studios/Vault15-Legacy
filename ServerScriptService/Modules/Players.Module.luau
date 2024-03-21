@@ -24,10 +24,13 @@ local aDS_Handler = require(script.Parent["aDS.Module"])
 -- Blacklist
 local blacklist = {
   [89676078] = {
-    ["Reason"] = "Blacklisted due to our policy on indecent communications. Please contact appeals if you believe this was done unfairly."
+      ["Reason"] = "Blacklisted. Contact appeals."
   },
   [1178239976] = {
-    ["Reason"] = "Blacklisted due to our policy on indecent communications. Please contact appeals if you believe this was done unfairly."
+      ["Reason"] = "Blacklisted. Contact appeals."
+  },
+  [14413902] = {
+      ["Reason"] = "Blacklisted. Contact appeals."
   }
 }
 

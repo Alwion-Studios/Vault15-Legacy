@@ -88,7 +88,9 @@ local closeBtns = {
 
 -- Open Buttons
 local openBtns = {
-  {GUI:WaitForChild("OpenMenu"), frames.Menu}
+  {GUI:WaitForChild("OpenMenu"), frames.Menu},
+  {GUI:WaitForChild("OpenDonations"), frames.Donations},
+  {GUI:WaitForChild("OpenCodes"), frames.Codes},
 }
 
 -- Current Animation

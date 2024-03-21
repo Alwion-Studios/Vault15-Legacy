@@ -62,7 +62,7 @@ function Pickup:HandleTrigger(player: Player)
     if status then print(`[PS] {player.Name} has picked up {self.Category} with a value of {self.Value}!`) end
 
     self.waitCoroutine = coroutine.create(function()
-        task.wait(30)
+        task.wait(40)
         self:ShowPickup()
     end)
     coroutine.resume(self.waitCoroutine)

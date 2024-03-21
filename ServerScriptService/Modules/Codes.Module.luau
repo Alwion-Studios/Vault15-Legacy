@@ -24,20 +24,20 @@ local aDS = require(SS:WaitForChild("aDS"):WaitForChild("Core"))
 -- Codes
 local Codes = {
     freecaps = {
-        ["Caps"] = 50
+        ["Caps"] = 25
     },
 
     morecaps = {
-        ["Caps"] = 150
+        ["Caps"] = 50
     },
 
     lotsofcaps = {
-        ["Caps"] = 250
+        ["Caps"] = 50
     },
 
     alwion = {
-        ["Caps"] = 100,
-        ["Bullet"] = 10
+        ["Caps"] = 50,
+        ["Bullet"] = 20
     },
 
     getscammed = {
