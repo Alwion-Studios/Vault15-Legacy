@@ -56,8 +56,11 @@
                 "AttemptPurchase": {
                     "$className": "RemoteFunction"
                 },
-                "ShopGUIOpen": {
+                "ShopGUI": {
                     "$className": "BindableEvent"
+                },
+                "RequestPurchase": {
+                    "$className": "RemoteFunction"
                 },
                 "LightingInitialised": {
                     "$className": "BindableEvent"

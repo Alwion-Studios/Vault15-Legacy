@@ -17,6 +17,13 @@ local RS = game:GetService("ReplicatedStorage")
 local PS = game:GetService("Players")
 local CAS = game:GetService("ContextActionService")
 
+-- Remotes
+local remotes = RS.Remotes
+local shopGuiRemote: BindableEvent = remotes.ShopGUI
+
+-- Item Template
+local itmTemplate = require(RS.ItemData)
+
 -- Formatting Function
 local formatter = require(RS.Formatting.Number)
 
@@ -68,6 +75,15 @@ local frames = {
       ["Away"]=UDim2.new(0.5,0,2,0)
     },
     UI = GUI:WaitForChild("Codes"),
+    Open = false
+  },
+
+  Shop = {
+    Pos = {
+      ["InFocus"]=UDim2.new(0.5,0,0.5,0),
+      ["Away"]=UDim2.new(0.5,0,2,0)
+    },
+    UI = GUI:WaitForChild("Shop"),
     Open = false
   }
 }
@@ -169,4 +185,33 @@ SaveFile:WaitForChild("Caps").Changed:Connect(function(newVal)
     countAnim(tonumber(LeftBox.Caps.Text), newVal, LeftBox.Caps)
   end)
   coroutine.resume(currCapAnim)
+end)
+
+-- Handle ShopGUI Remote
+shopGuiRemote.Event:Connect(function(instance, isClosing)
+  local frame = frames.Shop
+  local btnTmp = RS:WaitForChild("GuiTemplates"):WaitForChild("ShopBtn")
+
+  if isClosing or openFrame == frame then
+    for _, button in pairs(frame.UI.Items.ScrollingFrame:GetChildren()) do
+      if not button:IsA("UIListLayout") then button:Destroy() end
+    end
+    return closeUI(frame)
+  end
+
+  local inventory = require(instance:WaitForChild("Inventory"))
+  for name, amount in inventory do
+    local newBtn = btnTmp:Clone()
+    local Title = itmTemplate[name].Name
+    newBtn.Name = name
+    newBtn.Title.Text = `{Title} ({amount})`
+		newBtn.Price.Text = `{formatter(itmTemplate[name].Value)} .. " Caps"`
+		--newBtn.ImageLabel.Image = itmTemplate[name].Icon
+		newBtn.Parent = frame.UI.Items.ScrollingFrame
+		newBtn.MouseButton1Click:Connect(function ()
+      if PS.LocalPlayer:WaitForChild("SaveFile"):WaitForChild("Caps").Value < itmTemplate[name].Value then print(false) return false end
+      remotes.RequestPurchase:InvokeServer(name, instance)
+		end)
+  end
+  openUI(frame)
 end)
