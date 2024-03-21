@@ -1,3 +1,5 @@
+--!nonstrict
+
 --[[
      █████  ██      ██     ██ ██  ██████  ███    ██ 
     ██   ██ ██      ██     ██ ██ ██    ██ ████   ██ 
@@ -9,21 +11,28 @@
                   ALL RIGHTS RESERVED
                         ©️ 2024
 ]]
+--ROBLOX Service Calls
+local _SS = game:GetService("ServerScriptService")
+local _CS = game:GetService("CollectionService")
+local _RS = game:GetService("ReplicatedStorage")
 
--- ROBLOX API
-local ServerStorage = game:GetService("ServerStorage")
+-- Object
+local pickupObj = require(_SS.Objects["Pickup.Object"])
 
--- Imports
-local aDS = require(ServerStorage:WaitForChild("aDS").Objects:WaitForChild("Schema.Object"))
+--Imports
+local packages = _RS.Packages
+local Remotes = _RS.Remotes
 
-local UserInfo = aDS.Create("UserData", {
-  Caps = 15,
-  Bounty = 0,
-  Bullet = 0,
-  PlasmaCell = 0,
-  FusionCell = 0,
-  CodesRedeemed = {},
-  LastCollect = 0,
-  LastStreak = 0,
-}, {})
-return UserInfo
+local module = {
+    pickups = {}
+}
+module.__index = module
+
+function module:Initialise()
+    for _, instance in pairs(_CS:GetTagged("Pickup")) do 
+        print(`[PS] Initialising {instance.Name}`)
+        table.insert(self.pickups, pickupObj.New(instance, {["Category"]=instance.Name or nil, ["Value"]=instance:WaitForChild("Amount").Value or nil}))
+    end
+end
+
+return module

@@ -10,8 +10,60 @@
             
             "Remotes": {
                 "$className": "Folder",
+
+                "DebugRemotes": {
+                    "$className": "Folder"
+                },
+
+                "LobbyRemotes": {
+                    "$className": "Folder",
+                    
+                    "RefreshLobby": {
+                        "$className": "RemoteEvent"
+                    }
+                },
+
                 "CodeAttemptEvent": {
                     "$className": "RemoteFunction"
+                },
+                "DonationAttemptEvent": {
+                    "$className": "RemoteFunction"
+                },
+                "TeamSwitch": {
+                    "$className": "RemoteFunction"
+                },
+                "DoorTrigger": {
+                    "$className": "RemoteEvent"
+                },
+                "SignTrigger": {
+                    "$className": "RemoteEvent"
+                },
+                "FireWeapon": {
+                    "$className": "RemoteEvent"
+                },
+                "ReloadWeapon": {
+                    "$className": "RemoteEvent"
+                },
+                "ShotFired": {
+                    "$className": "RemoteEvent"
+                },
+                "HitMarker": {
+                    "$className": "RemoteEvent"
+                },
+                "RequestDoorDetails": {
+                    "$className": "RemoteFunction"
+                },
+                "AttemptPurchase": {
+                    "$className": "RemoteFunction"
+                },
+                "ShopGUIOpen": {
+                    "$className": "BindableEvent"
+                },
+                "LightingInitialised": {
+                    "$className": "BindableEvent"
+                },
+                "NotifyUser": {
+                    "$className": "RemoteEvent"
                 }
             },
 
@@ -37,8 +89,11 @@
             "$className": "ServerStorage",
             "$ignoreUnknownInstances": true,
             
-            "SoundStorage": {
-                "$className": "Folder"
+            "Events": {
+                "$className":"Folder",
+                "Kill": {
+                    "$className": "BindableEvent"
+                }
             },
 
             "$path": "ServerStorage"

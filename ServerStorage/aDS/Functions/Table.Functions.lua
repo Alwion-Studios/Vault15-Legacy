@@ -27,27 +27,24 @@ end]]
 
 local function ModifyKey(data, path, key, value)
     local toReturn = table.clone(data)
+    local currentLayer = 1
 
-    local function scan(tbl) 
-        local scanReturn = table.clone(tbl)
-
-        for scannedName, _ in tbl do 
-            local source = tbl[scannedName]
-
-            if source[key] then 
-               -- print(`{key} Found`)
-                source[key] = value
-                --print(`{key} Set to {value}`)
-                return true
-            end
-
-            for _, directory in path do
-                if source[directory] and type(source[directory]) == "table" then
-                    scanReturn[scannedName] = scan(source)
-                end
+    local function scan(tbl)
+        if not path or #path <= 0 then 
+            if not tbl[key] then return false end
+            tbl[key] = value
+        else
+            if #path == currentLayer then
+                print(true)
+                if not tbl[key] then return false end
+                tbl[key] = value
+            elseif tbl[path[currentLayer]] then
+                currentLayer += 1
+                return scan(tbl[path[currentLayer]])
             end
         end
     end
+
     scan(toReturn)
 
     return toReturn

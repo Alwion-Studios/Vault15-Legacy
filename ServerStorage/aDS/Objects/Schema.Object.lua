@@ -71,6 +71,8 @@ Gets the default schema template and adds the user's customisations
 function Schema.Create(name: String, structure: table, options: table): Schema
     local self = setmetatable({}, Schema)
     
+    print(`{name}-{datastoreNamePrefix[isStudio]}`)
+
     self.Name = name
     self.Structure = structure
     self.DataStore = DS:GetDataStore(`{name}-{datastoreNamePrefix[isStudio]}`)
@@ -264,6 +266,7 @@ end
 
 function Schema:Save()
     if not self.Id then return false end
+    if isStudio then warn(`Running in Studio! Ignoring save request!`) return true end
 
     return Promise.new(function(resolve, reject, onCancel) 
         local success, err = pcall(function()
@@ -333,40 +336,42 @@ end
     self:Start(1)
 ]]
 
-function Schema:Start(id, saveOnLoad) 
+function Schema:Start(id, saveOnLoad)
     if self.Id then warn(`[{self.Name} - {Core.Product}] Session is currently active`) return false end
 
-    return Promise.new(function(resolve, reject, onCancel) 
+    return Promise.new(function(resolve, reject, onCancel)
+        local toUse = table.clone(self)
+
         local currentUTCTime = os.time(os.date("!*t"))
 
-        self.Id = id
+        toUse.Id = id
 
-        local _, data = self:Serialise(id):await()
+        local _, data = toUse:Serialise(id):await()
 
-        if not data["Metadata"] or not data["Metadata"]["LastModified"] or (data["Metadata"]["LastModified"] - currentUTCTime) > self.Options.Settings.assumeDeadSessionLock then 
+        if not data["Metadata"] or not data["Metadata"]["LastModified"] or (data["Metadata"]["LastModified"] - currentUTCTime) > toUse.Options.Settings.assumeDeadSessionLock then 
             data["Metadata"] = {}
             data["Metadata"]["Session"] = {game.PlaceId, game.JobId or 0}
         end
 
         if data["Metadata"] and data["Metadata"]["Session"][1] ~= game.PlaceId or data["Metadata"]["Session"][2] ~= game.JobId then
-            warn(`[{self.Name} - {Core.Product}] Datastore with ID {id} is locked as it's in use on another server`)
+            warn(`[{toUse.Name} - {Core.Product}] Datastore with ID {id} is locked as it's in use on another server`)
             return reject(false)
         end
 
         if data["version"] then 
-            print(`[{self.Name} - {Core.Product}] Core v2 format detected. Converting to v3.`)
+            print(`[{toUse.Name} - {Core.Product}] Core v2 format detected. Converting to v3.`)
             data = data["data"]
         end
 
-        self["Metadata"] = data["Metadata"]
-        self["Structure"] = data
+        toUse["Metadata"] = data["Metadata"]
+        toUse["Structure"] = data
 
-        if saveOnLoad then self:Save() end
+        if saveOnLoad then toUse:Save() end
         
-        self["Structure"]["Metadata"] = nil
+        toUse["Structure"]["Metadata"] = nil
 
-        Core.Events.SessionOpen:Fire(self.Id) --Fire the SessionOpen Signal
-        return resolve(self)
+        Core.Events.SessionOpen:Fire(toUse.Id) --Fire the SessionOpen Signal
+        return resolve(toUse)
     end)
 end
 
@@ -386,9 +391,9 @@ end
 ]]
 
 function Schema:Close(refuseSave)
-    if refuseSave then return false end
-    
     return Promise.new(function(resolve, reject, onCancel) 
+        if refuseSave then reject(false) end
+
         self["Metadata"] = nil
         local status, _ = self:Save():await()
         if not status then return resolve(false) end

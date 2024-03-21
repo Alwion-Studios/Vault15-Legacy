@@ -1,3 +1,5 @@
+--!nonstrict
+
 --[[
      █████  ██      ██     ██ ██  ██████  ███    ██ 
     ██   ██ ██      ██     ██ ██ ██    ██ ████   ██ 
@@ -10,20 +12,16 @@
                         ©️ 2024
 ]]
 
--- ROBLOX API
-local ServerStorage = game:GetService("ServerStorage")
+--Imports
+local RS = game:GetService("ReplicatedStorage")
+local Controllers = RS.Controllers
 
--- Imports
-local aDS = require(ServerStorage:WaitForChild("aDS").Objects:WaitForChild("Schema.Object"))
+-- Controllers
+local render_controller = require(Controllers["Render.Controller"])
+local lighting_controller = require(Controllers["Lighting.Controller"])
+local notification_controller = require(Controllers["Notification.Controller"])
 
-local UserInfo = aDS.Create("UserData", {
-  Caps = 15,
-  Bounty = 0,
-  Bullet = 0,
-  PlasmaCell = 0,
-  FusionCell = 0,
-  CodesRedeemed = {},
-  LastCollect = 0,
-  LastStreak = 0,
-}, {})
-return UserInfo
+-- Initialise Controllers
+render_controller:Initialise()
+lighting_controller:Initialise()
+notification_controller:Initialise()
