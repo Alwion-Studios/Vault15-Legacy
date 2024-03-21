@@ -2,7 +2,7 @@ local Items = {
 	
 	Bullet = {
 		Name = "Bullet",
-		Value = 5,
+		Value = 10,
 		Type = "Ammo"
 	},
 	
@@ -26,25 +26,25 @@ local Items = {
 	
 	PlasmaRifle = {
 		Name = "Plasma Rifle",
-		Value = 1000,
+		Value = 800,
 		Type = "Primary"
 	},
 	
 	LaserPistol = {
 		Name = "Laser Pistol",
-		Value = 400,
+		Value = 300,
 		Type = "Secondary"
 	},
 	
 	AutomaticRifle = {
 		Name = "Automatic Rifle",
-		Value = 300,
+		Value = 200,
 		Type = "Primary"
 	},
 	
 	["10mmPistol"] = {
 		Name = "10mm Pistol",
-		Value = 150,
+		Value = 100,
 		Type = "Secondary"
 	},
 

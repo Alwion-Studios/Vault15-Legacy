@@ -67,6 +67,12 @@
                 },
                 "NotifyUser": {
                     "$className": "RemoteEvent"
+                },
+                "GetUserGamepasses": {
+                    "$className": "RemoteFunction"
+                },
+                "RedeemGamepass": {
+                    "$className": "RemoteFunction"
                 }
             },
 

@@ -206,6 +206,8 @@ shopGuiRemote.Event:Connect(function(instance, isClosing)
   end
 
   local inventory = require(instance:WaitForChild("Inventory"))
+  local gamepasses = remotes.GetUserGamepasses:InvokeServer()
+
   for name, amount in inventory do
     local newBtn = btnTmp:Clone()
     local Title = itmTemplate[name].Name
@@ -219,5 +221,20 @@ shopGuiRemote.Event:Connect(function(instance, isClosing)
       remotes.RequestPurchase:InvokeServer(name, instance)
 		end)
   end
+
+  for id, tbl in gamepasses do 
+    local newBtn: TextButton = btnTmp:Clone()
+    local Title = itmTemplate[tbl["Reward"]].Name
+    newBtn.Name = tbl["Reward"]
+    newBtn.Title.Text = `{Title}`
+		newBtn.Price.Text = `Gamepass.`
+    newBtn.BackgroundColor3 = Color3.fromRGB(201, 60, 214)
+		--newBtn.ImageLabel.Image = itmTemplate[name].Icon
+		newBtn.Parent = frame.UI.Items.ScrollingFrame
+    newBtn.MouseButton1Click:Connect(function ()
+      if remotes.RedeemGamepass:InvokeServer(tonumber(id)) then newBtn:Destroy() end
+		end)
+  end
+
   openUI(frame)
 end)

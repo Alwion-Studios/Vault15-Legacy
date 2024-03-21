@@ -25,6 +25,7 @@ local doors_module = require(script.Parent.Modules["Doors.Module"])
 local server_module = require(script.Parent.Modules["Server.Module"])
 local pickup__module = require(script.Parent.Modules["Pickup.Module"])
 local shops_module = require(script.Parent.Modules["Shops.Module"])
+local moderation_module = require(script.Parent.Modules["Monetisation.Module"])
 local aDS = require(ServerStorage:WaitForChild("aDS"):WaitForChild("Core"))
 
 -- Remotes
@@ -40,6 +41,7 @@ ads_module:Initialise()
 donations_module:Initialise()
 doors_module:Initialise()
 shops_module:Initialise()
+moderation_module:Initialise()
 
 -- Handle aDS Schema Initialisation
 aDS.Initialise(script.Parent.Schemas)

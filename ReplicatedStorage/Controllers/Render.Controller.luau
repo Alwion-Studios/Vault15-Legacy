@@ -49,11 +49,11 @@ function HandleDoorAnimation(instance, animation)
 
         if not UPRoot or not DOWNRoot then return false end
 
-        Tween(UPRoot, .75, "Linear", "Out", false, {CFrame = animation["Up"]})
-        Tween(DOWNRoot, .75, "Linear", "Out", false, {CFrame = animation["Down"]})
+        Tween(UPRoot, .65, "Linear", "Out", false, {CFrame = animation["Up"]})
+        Tween(DOWNRoot, .65, "Linear", "Out", false, {CFrame = animation["Down"]})
     elseif instance:GetAttribute("Category") == "VaultBorderDoor" then
         local Part = instance.PrimaryPart
-        Tween(Part, .75, "Linear", "Out", false, {CFrame = animation["Left"]})
+        Tween(Part, .65, "Linear", "Out", false, {CFrame = animation["Left"]})
     end
 end
 
