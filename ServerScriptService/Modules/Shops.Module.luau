@@ -45,7 +45,8 @@ function module.PurchaseItem(player: Player, name: string, instance: Instance)
         local status, _ = session:SetKey({}, name, (session["Structure"][name] + inventory[name])):await()
         if capStatus and status then return print(`[SS] {player.Name} has successfully purchased {inventory[name]} {name}(s) for {itmTemplate[name].Value}`) end
     else
-        local capStatus, _ = session:SetKey({}, name, (session["Structure"]["Caps"] - itmTemplate[name].Value)):await()
+        local capStatus, _ = session:SetKey({}, "Caps", (session["Structure"]["Caps"] - itmTemplate[name].Value)):await()
+
         local newItm = itms[name]:Clone()
         newItm.Parent = player.Backpack
 
