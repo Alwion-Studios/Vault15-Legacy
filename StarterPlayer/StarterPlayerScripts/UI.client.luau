@@ -99,7 +99,8 @@ local keys = {
 local closeBtns = {
   {frames.Menu.UI:WaitForChild("Title").Close, frames.Menu},
   {frames.Donations.UI:WaitForChild("Title").Close, frames.Donations},
-  {frames.Codes.UI:WaitForChild("Title").Close, frames.Codes}
+  {frames.Codes.UI:WaitForChild("Title").Close, frames.Codes},
+  {frames.Shop.UI:WaitForChild("Title").Close, frames.Shop}
 }
 
 -- Open Buttons
@@ -129,6 +130,12 @@ end
 
 -- Animation Functions
 local function closeUI(frame: frame)
+  if frame.UI.Name == "Shop" then 
+    for _, button in pairs(frame.UI.Items.ScrollingFrame:GetChildren()) do
+      if not button:IsA("UIListLayout") then button:Destroy() end
+    end
+  end
+
   frame.UI:TweenPosition(frame.Pos["Away"], Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
   openFrame = nil
 end
@@ -177,14 +184,16 @@ end
 -- Left Box Caps Rendering
 LeftBox.Caps.Text = formatter(SaveFile:WaitForChild("Caps").Value)
 SaveFile:WaitForChild("Caps").Changed:Connect(function(newVal)
-  if currCapAnim then
+  LeftBox.Caps.Text = formatter(newVal)
+
+  --[[if currCapAnim then
     coroutine.close(currCapAnim)
   end
 
   currCapAnim = coroutine.create(function()
     countAnim(tonumber(LeftBox.Caps.Text), newVal, LeftBox.Caps)
   end)
-  coroutine.resume(currCapAnim)
+  coroutine.resume(currCapAnim)]]
 end)
 
 -- Handle ShopGUI Remote
@@ -193,9 +202,6 @@ shopGuiRemote.Event:Connect(function(instance, isClosing)
   local btnTmp = RS:WaitForChild("GuiTemplates"):WaitForChild("ShopBtn")
 
   if isClosing or openFrame == frame then
-    for _, button in pairs(frame.UI.Items.ScrollingFrame:GetChildren()) do
-      if not button:IsA("UIListLayout") then button:Destroy() end
-    end
     return closeUI(frame)
   end
 
@@ -205,7 +211,7 @@ shopGuiRemote.Event:Connect(function(instance, isClosing)
     local Title = itmTemplate[name].Name
     newBtn.Name = name
     newBtn.Title.Text = `{Title} ({amount})`
-		newBtn.Price.Text = `{formatter(itmTemplate[name].Value)} .. " Caps"`
+		newBtn.Price.Text = `{formatter(itmTemplate[name].Value)} Caps`
 		--newBtn.ImageLabel.Image = itmTemplate[name].Icon
 		newBtn.Parent = frame.UI.Items.ScrollingFrame
 		newBtn.MouseButton1Click:Connect(function ()

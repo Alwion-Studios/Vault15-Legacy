@@ -40,7 +40,7 @@ local module = {
   build = game.PlaceVersion,
   main = 0,
   milestone = 8,
-  patch = 2,
+  patch = 3,
 }
 module.__index = module
 
