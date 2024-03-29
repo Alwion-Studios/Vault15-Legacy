@@ -39,8 +39,8 @@ local module = {
   branch = "mb",
   build = game.PlaceVersion,
   main = 0,
-  milestone = 8,
-  patch = 3,
+  milestone = 9,
+  patch = 0,
 }
 module.__index = module
 

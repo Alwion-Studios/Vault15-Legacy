@@ -147,7 +147,7 @@ local function openUI(frame: frame)
   end
 
   openFrame = frame
-  frame.UI:TweenPosition(frame.Pos["InFocus"], Enum.EasingDirection.In, Enum.EasingStyle.Quad, 0.5, true)
+  frame.UI:TweenPosition(frame.Pos["InFocus"], Enum.EasingDirection.In, Enum.EasingStyle.Quad, 0.35, true)
 end
 
 local function handleKey(frameName: string, inputState:Enum.UserInputState, inputObject: InputObject)
@@ -227,7 +227,7 @@ shopGuiRemote.Event:Connect(function(instance, isClosing)
     local Title = itmTemplate[tbl["Reward"]].Name
     newBtn.Name = tbl["Reward"]
     newBtn.Title.Text = `{Title}`
-		newBtn.Price.Text = `Gamepass.`
+		newBtn.Price.Text = `Gamepass`
     newBtn.BackgroundColor3 = Color3.fromRGB(201, 60, 214)
 		--newBtn.ImageLabel.Image = itmTemplate[name].Icon
 		newBtn.Parent = frame.UI.Items.ScrollingFrame
