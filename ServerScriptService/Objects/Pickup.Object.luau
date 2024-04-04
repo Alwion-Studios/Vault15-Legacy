@@ -53,10 +53,15 @@ function Pickup:HandleTrigger(player: Player)
 
     --Tells the System to enable the "IsOpening" debounce, disabling pickup for others
     self.Debounce = true
-    self:HidePickup()
 
     -- Get the Player's Session
-    local _, session = aDS:GetSession(player.UserId, "UserData"):await()
+    local _, session = aDS:GetSession(player.UserId, "Profile"):await()
+
+    if not session then
+        return false
+    end
+
+    self:HidePickup()
     local status, _ = session:SetKey({}, self.Category, (session["Structure"][self.Category] + self.Value)):await()
 
     if status then print(`[PS] {player.Name} has picked up {self.Category} with a value of {self.Value}!`) end
@@ -73,6 +78,10 @@ function Pickup.New(instance, opt)
 
     local self = setmetatable({}, Pickup)
 
+    if opt.Category == "Nuka-Cola Quantum Cap" or opt.Category == "Nuka-Cola Grape Cap" or opt.Category == "Nuka-Cola Cap" then 
+        opt.Category = "Caps"
+    end
+
     self.Value = opt.Value
     self.Category = opt.Category
     self.Instance = instance
@@ -80,7 +89,7 @@ function Pickup.New(instance, opt)
     self.PromptInstance = RS:WaitForChild("Storage"):WaitForChild("PickupPrompt"):Clone()
     self.PromptInstance.Parent = self.Instance:WaitForChild("Main")
     self.PromptInstance.ActionText = `Pickup`
-    self.PromptInstance.ObjectText = `({self.Value}) {self.Category}`
+    self.PromptInstance.ObjectText = `({self.Value}) {instance.Name}`
 
     self.PromptInstance.Triggered:Connect(function(player)
         self.PendingTrigger = pcall(self:HandleTrigger(player), self)

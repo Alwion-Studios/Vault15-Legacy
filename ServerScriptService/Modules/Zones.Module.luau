@@ -1,3 +1,5 @@
+--!nonstrict
+
 --[[
      █████  ██      ██     ██ ██  ██████  ███    ██ 
     ██   ██ ██      ██     ██ ██ ██    ██ ████   ██ 
@@ -9,20 +11,28 @@
                   ALL RIGHTS RESERVED
                         ©️ 2024
 ]]
+--ROBLOX Service Calls
+local _SS = game:GetService("ServerScriptService")
+local _CS = game:GetService("CollectionService")
+local _RS = game:GetService("ReplicatedStorage")
 
--- ROBLOX API
-local ServerStorage = game:GetService("ServerStorage")
+-- Object
+local zoneObj = require(_SS.Objects["ProtectedZone.Object"])
 
--- Imports
-local aDS = require(ServerStorage:WaitForChild("aDS").Objects:WaitForChild("Schema.Object"))
+--Imports
+local packages = _RS.Packages
+local Remotes = _RS.Remotes
 
-local UserInfo = aDS.Create("Profile", {
-  Caps = 15,
-  Bullet = 0,
-  PlasmaCell = 0,
-  FusionCell = 0,
-  CodesRedeemed = {},
-  LastCollect = 0,
-  LastStreak = 0,
-}, {})
-return UserInfo
+local module = {
+    zones = {}
+}
+module.__index = module
+
+function module:Initialise()
+    for _, instance in pairs(_CS:GetTagged("ProtectedZone")) do
+        print(`[ZS] Initialising {instance.Name}`)
+        self.zones[instance.Name] = zoneObj.New(instance)
+    end
+end
+
+return module

@@ -45,10 +45,10 @@ function module.AttemptDonation(player: Player, targetUsername: string, capsToDo
   capsToDonate = math.round(capsToDonate)
 
   -- Get the Player's Session
-  local _, session = aDS:GetSession(player.UserId, "UserData"):await()
+  local _, session = aDS:GetSession(player.UserId, "Profile"):await()
 
   -- Get the Target's Session
-  local _, targetSession = aDS:GetSession(PS[targetUsername].UserId, "UserData"):await()
+  local _, targetSession = aDS:GetSession(PS[targetUsername].UserId, "Profile"):await()
 
   if not session or not targetSession then
     warn(`[DS] Could not get a session for one (or more) of the defined players`)

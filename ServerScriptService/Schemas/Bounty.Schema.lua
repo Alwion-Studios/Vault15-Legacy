@@ -14,15 +14,7 @@
 local ServerStorage = game:GetService("ServerStorage")
 
 -- Imports
-local aDS = require(ServerStorage:WaitForChild("aDS").Objects:WaitForChild("Schema.Object"))
+local aDS = require(ServerStorage:WaitForChild("aDS").Objects:WaitForChild("OrderedSchema.Object"))
 
-local UserInfo = aDS.Create("Profile", {
-  Caps = 15,
-  Bullet = 0,
-  PlasmaCell = 0,
-  FusionCell = 0,
-  CodesRedeemed = {},
-  LastCollect = 0,
-  LastStreak = 0,
-}, {})
-return UserInfo
+local BountySchema = aDS.Create("Bounty", {})
+return BountySchema

@@ -54,7 +54,7 @@ function module.AttemptCode(player: Player, code: string)
     if not Codes[code] then notifyRemote:FireClient(player, `Code Redemption`, `This is not a valid code!`) return warn(`[CS] {player.Name} ({player.UserId}) attempted to use an incorrect code.`) end
 
     -- Get the user's session
-    local _, session = aDS:GetSession(player.UserId, "UserData"):await()
+    local _, session = aDS:GetSession(player.UserId, "Profile"):await()
     local _, codesTbl = session:GetKey("CodesRedeemed"):await()
 
     if not session then 

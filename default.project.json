@@ -53,6 +53,9 @@
                 "RequestDoorDetails": {
                     "$className": "RemoteFunction"
                 },
+                "GetVersionString": {
+                    "$className": "RemoteFunction"
+                },
                 "AttemptPurchase": {
                     "$className": "RemoteFunction"
                 },
