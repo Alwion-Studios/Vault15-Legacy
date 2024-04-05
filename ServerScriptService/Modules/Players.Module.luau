@@ -39,6 +39,7 @@ local players = {}
 players.__index = players
 
 function players.HandleJoin(player: Player)
+  -- Award BETA Badge
   pcall(function()
     return BS:AwardBadge(player.UserId, 1701232606423157)
   end)
@@ -51,6 +52,17 @@ function players.HandleJoin(player: Player)
 
   -- Configure a Datastore
   aDS_Handler:OnJoin(player)
+
+  -- Disable CanCollide, CanQuery and CanTouch for all accessories
+  local character = player.Character or player.CharacterAdded:Wait()
+  
+  for _, part: Accessory in pairs(character:GetChildren()) do 
+    if not part:IsA("Accessory") then continue end
+    part = part:WaitForChild("Handle")
+    part.CanCollide = false
+    part.CanTouch = false
+    part.CanQuery = false
+  end
 end
 
 function players:Initialise()

@@ -24,17 +24,17 @@ local ProtectedZone = {}
 ProtectedZone.__index = ProtectedZone
 
 function ProtectedZone.PlayerEntered(player: Player)
-    print(player)
     local character = player.Character or player.CharacterAdded:Wait()
+    print(`[ZNS] {player.Name} has entered a zone!`)
     local forceField = Instance.new("ForceField")
     forceField.Visible = true
     forceField.Parent = character
 end
 
 function ProtectedZone.PlayerLeft(player: Player)
-    print(player)
     local character = player.Character or player.CharacterAdded:Wait()
     if character:FindFirstChild("ForceField") then
+        print(`[ZNS] {player.Name} has left a zone!`)
         character:FindFirstChild("ForceField"):Destroy()
     end
 end

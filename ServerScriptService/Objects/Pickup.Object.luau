@@ -37,6 +37,12 @@ function Pickup:ShowPickup()
     self.PromptInstance.Enabled = true
     self.Debounce = false
 
+    if self.Instance.Name == "Bullet" then 
+        for _, partToHide in pairs(self.Instance:WaitForChild("Parts"):GetChildren()) do
+            partToHide.Transparency = 0
+        end
+    end
+
     if self.waitCoroutine then
         coroutine.yield(self.waitCoroutine)
         coroutine.close(self.waitCoroutine)
@@ -45,6 +51,13 @@ end
 
 function Pickup:HidePickup()
     self.Instance:WaitForChild("Main").Transparency = 1
+
+    if self.Instance.Name == "Bullet" then 
+        for _, partToHide in pairs(self.Instance:WaitForChild("Parts"):GetChildren()) do 
+            partToHide.Transparency = 1
+        end
+    end
+
     self.PromptInstance.Enabled = false
 end
 

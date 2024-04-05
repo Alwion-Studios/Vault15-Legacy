@@ -38,8 +38,6 @@ function module:OnJoin(player: Player)
   local status, session = aDS:CreateSession(player.UserId, schema):await()
   local bountyStatus, bountySession = aDS:CreateSession(player.UserId, bountySchema):await()
 
-  print(bountySession)
-
   -- Kick the player if datastore initialisation is unsuccessful
   if not status or not bountyStatus or not session or not bountySession then
     player:Kick(`[aDS] Failed to initialise a datastore session.`)
