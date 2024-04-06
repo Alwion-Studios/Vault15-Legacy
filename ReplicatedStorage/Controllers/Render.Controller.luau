@@ -54,6 +54,9 @@ function HandleDoorAnimation(instance, animation)
     elseif instance:GetAttribute("Category") == "VaultBorderDoor" then
         local Part = instance.PrimaryPart
         Tween(Part, .65, "Linear", "Out", false, {CFrame = animation["Left"]})
+    elseif instance:GetAttribute("Category") == "VaultBorderDoor2" then
+        local Part = instance.PrimaryPart
+        Tween(Part, 1.25, "Linear", "Out", false, {CFrame = animation["Down"]})
     end
 end
 

@@ -24,19 +24,39 @@ local lightingInitialisedRemote = remotes.LightingInitialised
 -- Lighting
 local Lighting = game:GetService("Lighting")
 
+--Tween Function
+local Tween = require(RS:WaitForChild("Functions"):WaitForChild("Tween"))
+
 -- Module
 local module = {
   Modes = {},
   CurrentMode = nil
 }
 
+-- Animation Blacklist
+local blacklistedTypes = {
+  ["SkyboxBk"] = true,
+  ["SkyboxDn"] = true,
+  ["SkyboxFt"] = true,
+  ["SkyboxLf"] = true,
+  ["SkyboxRt"] = true,
+  ["SkyboxUp"] = true
+}
+
 function module:HandleEffectCreation(effectName, effectValues)
   local newInst = Instance.new(effectName)
-  newInst.Parent = Lighting
 
   for nameValue, newValue in pairs(effectValues) do
-    newInst[nameValue] = newValue
+    if blacklistedTypes[nameValue] then
+      newInst[nameValue] = newValue
+      continue
+    end
+
+    --newInst[nameValue] = newValue
+    Tween(newInst, 0.5, "Linear", "Out", false, {[nameValue] = newValue})
   end
+
+  newInst.Parent = Lighting
 end
 
 function module:SetMode(mode: string)
