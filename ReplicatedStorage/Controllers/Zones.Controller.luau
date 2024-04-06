@@ -23,9 +23,12 @@ local module = {
 }
 
 function module:Initialise()
-    for _, zone in ipairs(_CS:GetTagged("Zone")) do
-        self.zones[zone.Name] = zoneObj.New(zone)
-    end
+    task.spawn(function()
+        for _, zone in _CS:GetTagged("Zone") do
+            print(`[ZNS-CLIENT] Adding {zone.Name}`)
+            self.zones[zone.Name] = zoneObj.New(zone)
+        end
+    end)
 end
 
 return module

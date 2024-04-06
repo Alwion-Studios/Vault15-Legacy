@@ -90,9 +90,11 @@ function RigAnimationController:ConfigureHeadTracking()
 end
 
 function RigAnimationController:Initialise()
-    for _, rig in pairs(_CS:GetTagged("AnimatedRig")) do
-        self:ConfigureRig(rig)
-    end
+    task.spawn(function()
+        for _, rig in pairs(_CS:GetTagged("AnimatedRig")) do
+            self:ConfigureRig(rig)
+        end
+    end)
     self:ConfigureHeadTracking()
 end
 

@@ -43,6 +43,10 @@ function Pickup:ShowPickup()
         end
     end
 
+    if self.Light then 
+        self.Light.Enabled = false
+    end
+
     if self.waitCoroutine then
         coroutine.yield(self.waitCoroutine)
         coroutine.close(self.waitCoroutine)
@@ -79,6 +83,10 @@ function Pickup:HandleTrigger(player: Player)
 
     if status then print(`[PS] {player.Name} has picked up {self.Category} with a value of {self.Value}!`) end
 
+    if self.Light then 
+        self.Light.Enabled = false
+    end
+
     self.waitCoroutine = coroutine.create(function()
         task.wait(40)
         self:ShowPickup()
@@ -90,6 +98,10 @@ function Pickup.New(instance, opt)
     if not instance or not opt then return false end
 
     local self = setmetatable({}, Pickup)
+
+    if opt.Category == "Nuka-Cola Quantum Cap" then 
+        self.Light = instance:WaitForChild("Main").PointLight
+    end
 
     if opt.Category == "Nuka-Cola Quantum Cap" or opt.Category == "Nuka-Cola Grape Cap" or opt.Category == "Nuka-Cola Cap" then 
         opt.Category = "Caps"

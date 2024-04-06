@@ -48,6 +48,10 @@ function module:OnJoin(player: Player)
   newFolder.Name = "SaveFile"
   newFolder.Parent = player
 
+  if not typeof(session) == "table" or not session["Structure"] then 
+    player:Kick(`[aDS] Failed to initialise a datastore session.`)
+  end
+
   for name, value in session["Structure"] do 
       if typeof(value) == "table" then continue end
       if not dataValues[typeof(value)] then continue end

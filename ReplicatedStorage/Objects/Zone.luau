@@ -45,8 +45,12 @@ function Zone:PlayerLeft()
         rpcSdk.SetRichPresence({details = "Exploring the Wasteland..."})
     end
 
-    if self.Lighting then
+    if self.Lighting and not self.Parent then
         lighting_controller:SetMode("Wasteland")
+    end
+
+    if self.ParentZone then
+        lighting_controller:SetMode(self.ParentZone:FindFirstChild("Lighting").Value.Name)
     end
 end
 
@@ -70,6 +74,11 @@ function Zone.New(instance: Instance)
     -- RPC Details
     if self.Instance:FindFirstChild("RPC") then
         self.RPC = require(self.Instance:FindFirstChild("RPC"))
+    end
+
+    -- Parent Details
+    if self.Instance:FindFirstChild("Parent") then
+        self.ParentZone = self.Instance:FindFirstChild("Parent").Value or nil
     end
 
     -- Lighting Folder

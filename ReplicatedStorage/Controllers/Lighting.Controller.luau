@@ -43,24 +43,6 @@ local blacklistedTypes = {
   ["SkyboxUp"] = true
 }
 
-local animationTypes = {
-  ["Atmosphere"] = {
-    ["Density"] = "number",
-    ["Offset"] = "number",
-    ["Glare"] = "number",
-    ["Haze"] = "number",
-    ["Color"] = "Color3",
-    ["Decay"] = "Color3",
-  },
-
-  ["ColorCorrectionEffect"] = {
-    ["Brightness"] = "number",
-    ["Contrast"] = "number",
-    ["Saturation"] = "number",
-    ["TintColor"] = "Color3",
-  }
-}
-
 function module:HandleEffectCreation(effectName, effectValues)
   local newInst
 
@@ -91,8 +73,8 @@ function module:SetMode(mode: string)
   self.CurrentMode = mode
 
   -- Initiate Cleanup
-  for name, inst in ipairs(Lighting:GetChildren()) do 
-    if self.Modes[mode][name] then continue end
+  for _, inst in ipairs(Lighting:GetChildren()) do
+    if self.Modes[mode][inst.Name] then continue end
     inst:Destroy()
   end
 
@@ -108,7 +90,7 @@ function module:Initialise()
     inst:Destroy()
   end
 
-  self:SetMode("Wasteland")
+  self.CurrentMode = "Wasteland"
   lightingInitialisedRemote:Fire()
 end
 
