@@ -20,6 +20,7 @@ local remotes = RS:WaitForChild("Remotes")
 
 -- Imports
 local aDS_Handler = require(script.Parent["aDS.Module"])
+local debug_module = require(script.Parent["Debug.Module"])
 
 -- Blacklist
 local blacklist = {
@@ -71,12 +72,12 @@ function players:Initialise()
     if not TS[teamName] then return false end
     local team = TS[teamName]
     
-    if team:GetAttribute("GroupId") and not player:IsInGroup(team:GetAttribute("GroupId")) then
+    if not debug_module.Toggles.DisableTeamGroupCheck and team:GetAttribute("GroupId") and not player:IsInGroup(team:GetAttribute("GroupId")) then
       warn(`{player.Name} is not in group {team:GetAttribute("GroupId")}!`)
       return false
     end
     
-    if team:GetAttribute("GroupId") and team:GetAttribute("RankId") and (player:GetRankInGroup(team:GetAttribute("GroupId")) < team:GetAttribute("RankId"))  then
+    if not debug_module.Toggles.DisableTeamRankCheck and team:GetAttribute("GroupId") and team:GetAttribute("RankId") and (player:GetRankInGroup(team:GetAttribute("GroupId")) < team:GetAttribute("RankId"))  then
       warn(`{player.Name} does not have the required rank to join this team!`)
       return false
     end
