@@ -43,44 +43,62 @@ local blacklistedTypes = {
   ["SkyboxUp"] = true
 }
 
+local animationTypes = {
+  ["Atmosphere"] = {
+    ["Density"] = "number",
+    ["Offset"] = "number",
+    ["Glare"] = "number",
+    ["Haze"] = "number",
+    ["Color"] = "Color3",
+    ["Decay"] = "Color3",
+  },
+
+  ["ColorCorrectionEffect"] = {
+    ["Brightness"] = "number",
+    ["Contrast"] = "number",
+    ["Saturation"] = "number",
+    ["TintColor"] = "Color3",
+  }
+}
+
 function module:HandleEffectCreation(effectName, effectValues)
-  local newInst = Instance.new(effectName)
+  local newInst
 
-  for nameValue, newValue in pairs(effectValues) do
-    if blacklistedTypes[nameValue] then
-      newInst[nameValue] = newValue
-      continue
-    end
-
-    --newInst[nameValue] = newValue
-    Tween(newInst, 0.5, "Linear", "Out", false, {[nameValue] = newValue})
+  if not Lighting:FindFirstChild(effectName) then
+    newInst = Instance.new(effectName)
+    newInst.Name = effectName
+    newInst.Parent = Lighting
   end
 
-  newInst.Parent = Lighting
+  newInst = Lighting:FindFirstChild(effectName)
+
+  task.spawn(function()
+    for nameValue, newValue in pairs(effectValues) do
+      if blacklistedTypes[nameValue] then
+        newInst[nameValue] = newValue
+        continue
+      end
+  
+      --newInst[nameValue] = newValue
+      Tween(newInst, 0.5, "Linear", "In", false, {[nameValue] = newValue})
+    end
+  end)
 end
 
 function module:SetMode(mode: string)
   if not self.Modes[mode] then return false end
 
-  --[[for _, inst in pairs(Lighting:GetChildren()) do 
-    if inst:IsA("Folder") then continue end
-    inst.Parent = self.Modes[self.CurrentMode]
-  end]]
+  self.CurrentMode = mode
 
-  for _, inst in ipairs(Lighting:GetChildren()) do
-    if inst:IsA("ModuleScript") then continue end
+  -- Initiate Cleanup
+  for name, inst in ipairs(Lighting:GetChildren()) do 
+    if self.Modes[mode][name] then continue end
     inst:Destroy()
   end
-
-  self.CurrentMode = mode
 
   for name, values in pairs(self.Modes[mode]) do
     self:HandleEffectCreation(name, values)
   end
-
-  --[[for _, inst in pairs(self.Modes[mode]:GetChildren()) do
-    inst.Parent = Lighting
-  end]]
 end
 
 function module:Initialise()
