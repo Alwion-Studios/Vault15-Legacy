@@ -26,14 +26,28 @@ local RigAnimationController = {}
 -- Get the Rig's Nearest Player
 local function getClosestPlayerHrp(hrp, dist)
     local closestHrp = nil
+
     for i, v in pairs(game.Players:GetChildren()) do
-        
         local tmpChar = v.Character or v.CharacterAdded:Wait()
         local tmpHrp = tmpChar:FindFirstChild("HumanoidRootPart")
-        local tmpDist = (tmpHrp.Position - hrp.Position).Magnitude      
-        if tmpHrp and tmpDist < dist then
-            closestHrp = tmpHrp
-            dist = tmpDist
+        local tmpDist = (tmpHrp.Position - hrp.Position).Magnitude
+
+        local raycastParams = RaycastParams.new()
+        raycastParams.FilterDescendantsInstances = {tmpHrp.Parent}
+        raycastParams.FilterType = Enum.RaycastFilterType.Include
+
+        local rayDestination = tmpHrp.Parent.Head.Position
+        local rayOrigin = (hrp.Parent.Head.Position)
+        local rayDirection = (rayDestination)
+        
+        local raycastResult = game.Workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+
+        if raycastResult then
+            print(raycastResult.Instance)
+            if tmpHrp and tmpDist < dist and raycastResult.Instance.Parent == tmpHrp.Parent then
+                closestHrp = tmpHrp
+                dist = tmpDist
+            end
         end
     end
     return closestHrp, dist
@@ -56,8 +70,6 @@ function RigAnimationController:ConfigureRig(rig: Instance)
 end
 
 function RigAnimationController:ConfigureHeadTracking()
-    local vecFlat = Vector3.new(1,0,1)
-
     -- Configure Head Tracking
     _RNS.RenderStepped:Connect(function(deltaTime)
         for _, rig in pairs(_CS:GetTagged("AnimatedRig")) do 
@@ -66,7 +78,7 @@ function RigAnimationController:ConfigureHeadTracking()
             local yOffSet = neck.C0.Y
             local zOffSet = neck.C0.Z
 
-            local closestHrp, dist = getClosestPlayerHrp(rig.HumanoidRootPart, 50)
+            local closestHrp, dist = getClosestPlayerHrp(rig.HumanoidRootPart, 40)
             if closestHrp then
                 local dir = (closestHrp.Position - rig.HumanoidRootPart.Position).Unit
                 local vecA = Vector2.new(rig.HumanoidRootPart.CFrame.LookVector.X, rig.HumanoidRootPart.CFrame.LookVector.Z)
@@ -82,8 +94,9 @@ function RigAnimationController:ConfigureHeadTracking()
                 elseif angle < -math.pi/3 then
                     angle = -math.pi/3
                 end
-                neck.C0 = CFrame.new(xOffSet, yOffSet, zOffSet)*CFrame.Angles(0, -angle, 0) * 
-                    CFrame.Angles(-upAngle, 0, 0)
+                Tween(neck, 0.15, "Linear", "In", false, {C0 = (CFrame.new(xOffSet, yOffSet, zOffSet)*CFrame.Angles(0, -angle, 0) * CFrame.Angles(-upAngle, 0, 0))})
+            else
+                Tween(neck, 0.5, "Linear", "In", false, {C0 = (CFrame.new(xOffSet, yOffSet, zOffSet)*CFrame.Angles(0, 0, 0) * CFrame.Angles(0, 0, 0))})
             end
         end
     end)
@@ -95,7 +108,9 @@ function RigAnimationController:Initialise()
             self:ConfigureRig(rig)
         end
     end)
-    self:ConfigureHeadTracking()
+    task.spawn(function()
+        self:ConfigureHeadTracking()
+    end)
 end
 
 return RigAnimationController

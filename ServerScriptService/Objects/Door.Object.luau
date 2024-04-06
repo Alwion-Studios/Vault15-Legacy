@@ -135,7 +135,7 @@ function Door:Close()
     end
 
     self.IsOpen = false
-    Remotes.DoorTrigger:FireAllClients(self.Instance, self.Positions["Closed"])
+    Remotes.DoorTrigger:FireAllClients(self.Instance, self.Positions["Closed"], true)
     return true
 end
 

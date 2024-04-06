@@ -38,7 +38,7 @@ function ChangeDoorPosition(instance, position)
     DOWNRoot.CFrame = position["Down"]
 end
 
-function HandleDoorAnimation(instance, animation)
+function HandleDoorAnimation(instance, animation, isClosing)
     if not instance then return false end 
 
     if instance:GetAttribute("Category") == "VaultInteriorDoor" then
@@ -49,8 +49,13 @@ function HandleDoorAnimation(instance, animation)
 
         if not UPRoot or not DOWNRoot then return false end
 
-        Tween(UPRoot, .65, "Linear", "Out", false, {CFrame = animation["Up"]})
-        Tween(DOWNRoot, .65, "Linear", "Out", false, {CFrame = animation["Down"]})
+        if isClosing then 
+            Tween(UPRoot, 1, "Sine", "In", false, {CFrame = animation["Up"]})
+            Tween(DOWNRoot, 1, "Sine", "In", false, {CFrame = animation["Down"]})
+        else 
+            Tween(UPRoot, 1, "Sine", "Out", false, {CFrame = animation["Up"]})
+            Tween(DOWNRoot, 1, "Sine", "Out", false, {CFrame = animation["Down"]})
+        end
     elseif instance:GetAttribute("Category") == "VaultBorderDoor" then
         local Part = instance.PrimaryPart
         Tween(Part, .65, "Linear", "Out", false, {CFrame = animation["Left"]})
