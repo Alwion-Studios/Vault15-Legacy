@@ -13,19 +13,19 @@
 ]]
 
 --Imports
-local RS = game:GetService("ReplicatedStorage")
-local Controllers = RS.Controllers
+local _CS = game:GetService("CollectionService")
 
--- Controllers
-local render_controller = require(Controllers["Render.Controller"])
-local lighting_controller = require(Controllers["Lighting.Controller"])
-local notification_controller = require(Controllers["Notification.Controller"])
-local rigAnimation_controller = require(Controllers["Animation.Controller"])
-local zone_controller = require(Controllers["Zones.Controller"])
+-- Object
+local zoneObj = require(script.Parent.Parent.Objects.Zone)
 
--- Initialise Controllers
-render_controller:Initialise()
-lighting_controller:Initialise()
-rigAnimation_controller:Initialise()
-zone_controller:Initialise()
-notification_controller:Initialise()
+local module = {
+    zones = {}
+}
+
+function module:Initialise()
+    for _, zone in ipairs(_CS:GetTagged("Zone")) do
+        self.zones[zone.Name] = zoneObj.New(zone)
+    end
+end
+
+return module

@@ -30,27 +30,47 @@ local module = {
   CurrentMode = nil
 }
 
+function module:HandleEffectCreation(effectName, effectValues)
+  local newInst = Instance.new(effectName)
+  newInst.Parent = Lighting
+
+  for nameValue, newValue in pairs(effectValues) do
+    newInst[nameValue] = newValue
+  end
+end
+
 function module:SetMode(mode: string)
   if not self.Modes[mode] then return false end
 
-  for _, inst in pairs(Lighting:GetChildren()) do 
+  --[[for _, inst in pairs(Lighting:GetChildren()) do 
     if inst:IsA("Folder") then continue end
     inst.Parent = self.Modes[self.CurrentMode]
+  end]]
+
+  for _, inst in ipairs(Lighting:GetChildren()) do
+    if inst:IsA("ModuleScript") then continue end
+    inst:Destroy()
   end
 
   self.CurrentMode = mode
 
-  for _, inst in pairs(self.Modes[mode]:GetChildren()) do
-    inst.Parent = Lighting
+  for name, values in pairs(self.Modes[mode]) do
+    self:HandleEffectCreation(name, values)
   end
+
+  --[[for _, inst in pairs(self.Modes[mode]:GetChildren()) do
+    inst.Parent = Lighting
+  end]]
 end
 
 function module:Initialise()
   for _, inst in pairs(Lighting:GetChildren()) do 
-    if not inst:IsA("Folder") then continue end
-    self.Modes[inst.Name] = inst
+    if not inst:IsA("ModuleScript") then continue end
+    self.Modes[inst.Name] = require(inst)
+    inst:Destroy()
   end
-  self:SetMode("Future")
+
+  self:SetMode("Wasteland")
   lightingInitialisedRemote:Fire()
 end
 
