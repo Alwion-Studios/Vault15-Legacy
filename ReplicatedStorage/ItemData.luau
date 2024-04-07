@@ -50,7 +50,6 @@ local Items = {
 
 	["Gamepass10mmPistol"] = {
 		Name = "10mm Pistol (Gamepass)",
-		Value = 100,
 		Type = "Secondary",
 		GamepassId = 755960403
 	},

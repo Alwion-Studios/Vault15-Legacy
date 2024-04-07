@@ -79,6 +79,9 @@
                 },
                 "GetGamepassRedemptionStatus": {
                     "$className": "RemoteFunction"
+                },
+                "MouseClickEvent": {
+                    "$className": "BindableEvent"
                 }
             },
 

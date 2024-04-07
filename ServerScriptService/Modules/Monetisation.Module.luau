@@ -19,6 +19,7 @@ local _RS = game:GetService("ReplicatedStorage")
 --Imports
 local packages = _RS.Packages
 local Remotes = _RS.Remotes
+local notifyRemote = Remotes.NotifyUser
 
 -- Variables
 local redemptionCountdownTime = 5
@@ -32,7 +33,8 @@ local module = {
         ["Reward"] = "10mmPistol"
       }
     };
-    PendingRedemptions = {}
+    PendingRedemptions = {};
+    PendingRequests = {}
 }
 module.__index = module
 
@@ -60,9 +62,13 @@ end
 
 function module.RedeemGamepass(player: Player, id: number)
   if not player or not id then return false end
+  if module.PendingRequests[player.UserId] then return false end
   
+  module.PendingRequests[player.UserId] = true
+
   if module.PendingRedemptions[player.UserId] and module.PendingRedemptions[player.UserId][id] and (os.time() - module.PendingRedemptions[player.UserId][id]["redemptionTime"] < redemptionCountdownTime) then
     module.PendingRedemptions[player.UserId][id] = nil
+    notifyRemote:FireClient(player, "Redemption", `You've redeemed this item! Wait for a couple of minutes before trying again.`)
     return false
   end
 
@@ -82,6 +88,8 @@ function module.RedeemGamepass(player: Player, id: number)
     }
   }
 
+  notifyRemote:FireClient(player, "Redemption", `You've successfully redeemed {item}!`)
+  module.PendingRequests[player.UserId] = nil
   return true
 end
 
