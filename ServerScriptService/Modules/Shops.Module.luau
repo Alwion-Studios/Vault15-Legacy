@@ -34,7 +34,7 @@ local itms = RS.Items
 local module = {}
 module.__index = module
 
-function module.PurchaseItem(player: Player, name: string, instance: Instance)
+function module.PurchaseItem(player: Player, currentCategoryId: string, name: string, instance: Instance)
     if player:WaitForChild("SaveFile"):WaitForChild("Caps").Value < itmTemplate[name].Value then
         notifyRemote:FireClient(player, "Purchase", `You do not have the sufficient caps needed to buy {name}!`)
 
@@ -48,10 +48,10 @@ function module.PurchaseItem(player: Player, name: string, instance: Instance)
 
     if item.Type == "Ammo" then
         local capStatus, _ = session:SetKey({}, "Caps", (session["Structure"]["Caps"] - itmTemplate[name].Value)):await()
-        local status, _ = session:SetKey({}, name, (session["Structure"][name] + inventory[name]["Quantity"])):await()
+        local status, _ = session:SetKey({}, name, (session["Structure"][name] + inventory[currentCategoryId][name]["Quantity"])):await()
         if capStatus and status then
-            notifyRemote:FireClient(player, "Purchase", `You've successfully purchased {inventory[name]["Quantity"]} {name}(s)!`)
-            return print(`[SS] {player.Name} has successfully purchased {inventory[name]["Quantity"]} {name}(s) for {itmTemplate[name].Value}`) 
+            notifyRemote:FireClient(player, "Purchase", `You've successfully purchased {inventory[currentCategoryId][name]["Quantity"]} {name}(s)!`)
+            return print(`[SS] {player.Name} has successfully purchased {inventory[currentCategoryId][name]["Quantity"]} {name}(s) for {itmTemplate[name].Value}`) 
         end
     else
         local capStatus, _ = session:SetKey({}, "Caps", (session["Structure"]["Caps"] - itmTemplate[name].Value)):await()

@@ -51,17 +51,28 @@ local module = {
     storeConfig = nil;
     itemDetails = nil;
     itemName = nil;
+    categoryTbl = nil;
+    currentCategoryId = nil;
 }
 
 local function findModelInCategory(category, modelToFind)
     for name, value in pairs(category) do
+        if name == "AnimationDirection" or name == "CategoryName" or name == "ModelInstance" then continue end
         if value["GunInstance"] == modelToFind then return name, value end
     end
     return false
 end
 
 function module:SwitchCategory(categoryName: string, categoryTbl: table)
-    self.UI.Category.Text = categoryName
+    self.UI.Top.Category.Text = categoryName
+
+    if self.itemDetails then
+        local instance: Model = self.itemDetails["GunInstance"]
+
+        Tween(instance.PrimaryPart, 0.5, "Quad", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        self.UI.ItemDetails.Visible = false
+    end
+
     cameraModule:RenderCameraOnPart(categoryTbl["ModelInstance"].PrimaryPart)
     self.categoryTbl = categoryTbl
 end
@@ -73,7 +84,6 @@ function module:SwitchItem(name: string, itemTbl: table)
         local instance: Model = self.itemDetails["GunInstance"]
 
         Tween(instance.PrimaryPart, 0.5, "Quad", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
-        task.wait(0.5)
     end
 
     self.itemName = name
@@ -83,10 +93,19 @@ function module:SwitchItem(name: string, itemTbl: table)
     if self.itemDetails["GunInstance"] then 
         local instance: Model = self.itemDetails["GunInstance"]
 
-        local calculation = (
-            CFrame.new(instance.PrimaryPart.Position.X, instance.PrimaryPart.Position.Y, instance.PrimaryPart.Position.Z-1)
-            * CFrame.Angles(math.rad(instance.PrimaryPart.Orientation.X), math.rad(instance.PrimaryPart.Orientation.Y), math.rad(instance.PrimaryPart.Orientation.Z))
-        )
+        local calculation
+
+        if self.categoryTbl["AnimationDirection"] and self.categoryTbl["AnimationDirection"] == "Up" then 
+            calculation = (
+                CFrame.new(instance.PrimaryPart.Position.X, instance.PrimaryPart.Position.Y+1, instance.PrimaryPart.Position.Z)
+                * CFrame.Angles(math.rad(instance.PrimaryPart.Orientation.X), math.rad(instance.PrimaryPart.Orientation.Y), math.rad(instance.PrimaryPart.Orientation.Z))
+            )
+        else
+            calculation = (
+                CFrame.new(instance.PrimaryPart.Position.X, instance.PrimaryPart.Position.Y, instance.PrimaryPart.Position.Z-1)
+                * CFrame.Angles(math.rad(instance.PrimaryPart.Orientation.X), math.rad(instance.PrimaryPart.Orientation.Y), math.rad(instance.PrimaryPart.Orientation.Z))
+            )
+        end
 
         Tween(instance.PrimaryPart, 0.5, "Quad", "Out", false, {["CFrame"] = calculation})
     end
@@ -98,9 +117,9 @@ function module:RefreshItemGui()
 
     if itemData[self.itemName].GamepassId then
         local redemptionTime, timeUntilReset = remotes.GetGamepassRedemptionStatus:InvokeServer(itemData[self.itemName].GamepassId)
+        self.UI.ItemDetails.TopBar.Price.Text = "Gamepass"
 
-        if not redemptionTime then 
-            self.UI.ItemDetails.TopBar.Price.Text = "Purchaseable Gamepass"
+        if not redemptionTime then
             self.UI.ItemDetails.Options.Right.Purchase.BackgroundColor3 = Color3.fromRGB(50,255,0)
         elseif typeof(redemptionTime) ~= "number" then
             self.UI.ItemDetails.Options.Right.Purchase.BackgroundColor3 = Color3.fromRGB(255,0,150)
@@ -141,17 +160,16 @@ end
 function module:Initialise()
     self.UI = self.playerGui:WaitForChild("ShopUI")
 
-    shopGuiRemote.Event:Connect(function(importedConfig: table)
+    shopGuiRemote.Event:Connect(function(shopInst: Part, importedConfig: table)
         if not importedConfig then return false end
 
+        self.StoreInstance = shopInst
         self.storeConfig = importedConfig
         guiModule:SwitchGui("shopGui")
 
         -- Initial Category Selection
-        for category, value in pairs(self.storeConfig) do 
-            if not value["ModelInstance"] then continue end
-            self:SwitchCategory(category, value)
-        end
+        self.currentCategoryId = 3
+        self:SwitchCategory(self.storeConfig[self.currentCategoryId]["CategoryName"], self.storeConfig[self.currentCategoryId])
 
         self.MouseConnectionID = mouseModule:Connect()
     end)
@@ -167,10 +185,24 @@ function module:Initialise()
         if not self.itemDetails or not self.itemName then return false end
 
         if not itemData[self.itemName].GamepassId then 
-            remotes.RequestPurchase:InvokeServer(self.itemName)
+            remotes.RequestPurchase:InvokeServer(self.currentCategoryId, self.itemName, self.StoreInstance)
         else
             remotes.RedeemGamepass:InvokeServer(itemData[self.itemName].GamepassId)
         end
+    end)
+
+    self.UI.Top.Left.Activated:Connect(function()
+        if not self.storeConfig[self.currentCategoryId+1] then print(false) return false end
+        self.currentCategoryId += 1
+
+        self:SwitchCategory(self.storeConfig[self.currentCategoryId]["CategoryName"], self.storeConfig[self.currentCategoryId])
+    end)
+
+    self.UI.Top.Right.Activated:Connect(function()
+        if not self.storeConfig[self.currentCategoryId-1] then return false end
+        self.currentCategoryId -= 1
+
+        self:SwitchCategory(self.storeConfig[self.currentCategoryId]["CategoryName"], self.storeConfig[self.currentCategoryId])
     end)
 
     self.UI.Exit.Activated:Connect(function()

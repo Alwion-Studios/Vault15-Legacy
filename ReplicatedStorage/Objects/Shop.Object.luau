@@ -27,8 +27,8 @@ local shopGuiOpen = remotes:WaitForChild("ShopGUI")
 local Shop = {}
 Shop.__index = Shop
 
-local function onTrigger(ShopConfig)
-    shopGuiOpen:Fire(ShopConfig)
+local function onTrigger(ShopInst, ShopConfig)
+    shopGuiOpen:Fire(ShopInst, ShopConfig)
 end
 
 function Shop:onRefresh()
@@ -38,7 +38,7 @@ function Shop:onRefresh()
     proxPrompt.Parent = self.Instance
     proxPrompt.HoldDuration = 0.5
     proxPrompt.TriggerEnded:Connect(function()
-        onTrigger(self.ShopConfig)
+        onTrigger(self.Instance, self.ShopConfig)
     end)
 end
 
