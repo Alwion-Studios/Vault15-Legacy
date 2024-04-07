@@ -41,6 +41,12 @@ local Items = {
 		Value = 200,
 		Type = "Primary"
 	},
+
+	["GamepassAutomaticRifle"] = {
+		Name = "Automatic Rifle (Gamepass)",
+		Value = 200,
+		Type = "Primary"
+	},
 	
 	["10mmPistol"] = {
 		Name = "10mm Pistol",

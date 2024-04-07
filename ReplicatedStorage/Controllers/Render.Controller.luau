@@ -50,18 +50,18 @@ function HandleDoorAnimation(instance, animation, isClosing)
         if not UPRoot or not DOWNRoot then return false end
 
         if isClosing then 
-            Tween(UPRoot, 1, "Sine", "In", false, {CFrame = animation["Up"]})
-            Tween(DOWNRoot, 1, "Sine", "In", false, {CFrame = animation["Down"]})
+            Tween(UPRoot, 1, "Sine", "In", 0, false, {CFrame = animation["Up"]})
+            Tween(DOWNRoot, 1, "Sine", "In", 0, false, {CFrame = animation["Down"]})
         else 
-            Tween(UPRoot, 1, "Sine", "Out", false, {CFrame = animation["Up"]})
-            Tween(DOWNRoot, 1, "Sine", "Out", false, {CFrame = animation["Down"]})
+            Tween(UPRoot, 1, "Sine", "Out", 0, false, {CFrame = animation["Up"]})
+            Tween(DOWNRoot, 1, "Sine", "Out", 0, false, {CFrame = animation["Down"]})
         end
     elseif instance:GetAttribute("Category") == "VaultBorderDoor" then
         local Part = instance.PrimaryPart
-        Tween(Part, .65, "Linear", "Out", false, {CFrame = animation["Left"]})
+        Tween(Part, .65, "Linear", "Out", 0, false, {CFrame = animation["Left"]})
     elseif instance:GetAttribute("Category") == "VaultBorderDoor2" then
         local Part = instance.PrimaryPart
-        Tween(Part, 1.25, "Linear", "Out", false, {CFrame = animation["Down"]})
+        Tween(Part, 1.25, "Linear", "Out", 0, false, {CFrame = animation["Down"]})
     end
 end
 
@@ -71,7 +71,7 @@ function HandleSignAnimation(instance, colour)
     local MainColour = instance:WaitForChild("Main")
     if not MainColour then return false end
 
-    Tween(MainColour, .25, "Linear", "In", false, {Color = colour})
+    Tween(MainColour, .25, "Linear", "In", 0, false, {Color = colour})
 end
 
 function ChangeSignColour(instance, colour)

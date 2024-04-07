@@ -94,23 +94,30 @@ function RigAnimationController:ConfigureHeadTracking()
                 elseif angle < -math.pi/3 then
                     angle = -math.pi/3
                 end
-                Tween(neck, 0.15, "Linear", "In", false, {C0 = (CFrame.new(xOffSet, yOffSet, zOffSet)*CFrame.Angles(0, -angle, 0) * CFrame.Angles(-upAngle, 0, 0))})
+                neck.C0 = (CFrame.new(xOffSet, yOffSet, zOffSet)*CFrame.Angles(0, -angle, 0) * CFrame.Angles(-upAngle, 0, 0))
+                --Tween(neck, 0.15, "Linear", "In", 0, false, {C0 = (CFrame.new(xOffSet, yOffSet, zOffSet)*CFrame.Angles(0, -angle, 0) * CFrame.Angles(-upAngle, 0, 0))})
             else
-                Tween(neck, 0.5, "Linear", "In", false, {C0 = (CFrame.new(xOffSet, yOffSet, zOffSet)*CFrame.Angles(0, 0, 0) * CFrame.Angles(0, 0, 0))})
+                Tween(neck, 0.5, "Linear", "In", 0, false, {C0 = (CFrame.new(xOffSet, yOffSet, zOffSet)*CFrame.Angles(0, 0, 0) * CFrame.Angles(0, 0, 0))})
             end
         end
     end)
 end
 
 function RigAnimationController:Initialise()
-    task.spawn(function()
-        for _, rig in pairs(_CS:GetTagged("AnimatedRig")) do
-            self:ConfigureRig(rig)
-        end
-    end)
-    task.spawn(function()
-        self:ConfigureHeadTracking()
-    end)
+    for _, rig in pairs(_CS:GetTagged("AnimatedRig")) do
+        self:ConfigureRig(rig)
+    end
+
+    self:ConfigureHeadTracking()
+
+    for _, instance: UnionOperation in pairs(_CS:GetTagged("Fan")) do
+        local speed = Random.new():NextNumber(-0.25, -1.75)
+        task.spawn(function()
+            while task.wait(0.001) do 
+                instance.CFrame = instance.CFrame * CFrame.Angles(math.rad(speed), 0, 0)
+            end
+        end)
+    end
 end
 
 return RigAnimationController

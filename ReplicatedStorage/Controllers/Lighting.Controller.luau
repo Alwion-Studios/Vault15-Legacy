@@ -62,7 +62,7 @@ function module:HandleEffectCreation(effectName, effectValues)
       end
   
       --newInst[nameValue] = newValue
-      Tween(newInst, 1, "Sine", "Out", false, {[nameValue] = newValue})
+      Tween(newInst, 1, "Sine", "Out", 0, false, {[nameValue] = newValue})
     end
   end)
 end
