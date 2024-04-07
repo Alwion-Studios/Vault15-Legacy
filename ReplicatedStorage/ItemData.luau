@@ -1,7 +1,7 @@
 local Items = {
 	
 	Bullet = {
-		Name = "Bullet",
+		Name = "Bullets",
 		Value = 10,
 		Type = "Ammo"
 	},

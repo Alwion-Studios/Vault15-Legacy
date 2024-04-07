@@ -25,6 +25,26 @@ local shopObject = require(script.Parent.Parent.Objects["Shop.Object"])
 local remotes = _RS.Remotes
 local shopGuiRemote: BindableEvent = remotes.ShopGUI
 
+-- Core Call
+local coreCall do
+	local MAX_RETRIES = 8
+
+	local StarterGui = game:GetService('StarterGui')
+	local RunService = game:GetService('RunService')
+
+	function coreCall(method, ...)
+		local result = {}
+		for retries = 1, MAX_RETRIES do
+			result = {pcall(StarterGui[method], StarterGui, ...)}
+			if result[1] then
+				break
+			end
+			RunService.Stepped:Wait()
+		end
+		return unpack(result)
+	end
+end
+
 local module = {
     player = _PS.LocalPlayer;
     playerGui = _PS.LocalPlayer.PlayerGui;
@@ -35,7 +55,8 @@ local module = {
     shopGui = {
         Instance = _PS.LocalPlayer.PlayerGui:WaitForChild("ShopUI");
         DisableMovement = true;
-        DisableRobloxUIs = true
+        DisableRobloxUIs = true;
+        DisableResets = true;
     };
 
     mainGui = {
@@ -53,6 +74,12 @@ function module:SwitchGui(guiName: string)
 
     self.openUI = self[guiName]
     self.openUI.Instance.Enabled = true
+
+    if self.openUI.DisableResets then 
+        assert(coreCall('SetCore', 'ResetButtonCallback', false))
+    else
+        assert(coreCall('SetCore', 'ResetButtonCallback', true))
+    end
 
     if self.openUI.DisableRobloxUIs then
         -- Disable UIs
