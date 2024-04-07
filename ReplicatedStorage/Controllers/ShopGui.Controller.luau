@@ -225,8 +225,8 @@ function module:Initialise()
 
         self.MouseConnectionID = mouseModule:Connect()
 
-        _CAS:BindAction("MOVE_RIGHT", handleAction, false, Enum.KeyCode.D)
-        _CAS:BindAction("MOVE_LEFT", handleAction, false, Enum.KeyCode.A)
+        _CAS:BindAction("MOVE_RIGHT", handleAction, false, Enum.KeyCode.D, Enum.KeyCode.Right, Enum.KeyCode.DPadRight)
+        _CAS:BindAction("MOVE_LEFT", handleAction, false, Enum.KeyCode.A, Enum.KeyCode.Left, Enum.KeyCode.DPadLeft)
     end)
 
     remotes.MouseClickEvent.Event:Connect(function(id: number, target: Model)

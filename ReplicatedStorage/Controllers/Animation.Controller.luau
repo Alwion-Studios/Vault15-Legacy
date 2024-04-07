@@ -111,7 +111,7 @@ function RigAnimationController:Initialise()
     self:ConfigureHeadTracking()
 
     for _, instance: UnionOperation in pairs(_CS:GetTagged("Fan")) do
-        local speed = Random.new():NextNumber(-0.25, -1.75)
+        local speed = Random.new():NextNumber(-0.25, -2)
         task.spawn(function()
             while task.wait(0.001) do 
                 instance.CFrame = instance.CFrame * CFrame.Angles(math.rad(speed), 0, 0)
