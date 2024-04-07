@@ -11,34 +11,53 @@
                   ALL RIGHTS RESERVED
                         ©️ 2024
 ]]
+--ROBLOX Service Calls
+local _SSS = game:GetService("ServerScriptService")
+local _SS = game:GetService("ServerStorage")
+local _RS = game:GetService("ReplicatedStorage")
+local _CS = game:GetService("CollectionService")
 
 --Imports
-local RS = game:GetService("ReplicatedStorage")
-local CS = game:GetService("CollectionService")
+local packages = _RS.Packages
 
 -- Remotes
-local remotes = RS:WaitForChild("Remotes")
+local remotes = _RS:WaitForChild("Remotes")
 local shopGuiOpen = remotes:WaitForChild("ShopGUI")
 
--- Proximity Prompt Handle Function
-local function onTrigger(instance: Instance)
-    shopGuiOpen:Fire(instance, false)
+local Shop = {}
+Shop.__index = Shop
+
+local function onTrigger(ShopConfig)
+    shopGuiOpen:Fire(ShopConfig)
 end
 
-local function onRefresh(instance: Instance)
+function Shop:onRefresh()
     local proxPrompt = Instance.new("ProximityPrompt")
     proxPrompt.ObjectText = "Shop"
     proxPrompt.ActionText = "Browse Inventory"
-    proxPrompt.Parent = instance
-    proxPrompt.TriggerEnded:Connect(function(playerWhoTriggered)
-        onTrigger(instance)
+    proxPrompt.Parent = self.Instance
+    proxPrompt.HoldDuration = 0.5
+    proxPrompt.TriggerEnded:Connect(function()
+        onTrigger(self.ShopConfig)
     end)
 end
 
--- Deploy Proximity Prompts to new Shops
-CS:GetInstanceAddedSignal("Shop"):Connect(onRefresh)
+function Shop.New(instance: Instance)
+    if not instance then return false end
 
--- Deploy Proximity Prompts for all Shops
-for _, shop in pairs(CS:GetTagged("Shop")) do
-    onRefresh(shop)
+    local self = setmetatable({}, Shop)
+
+    self.Instance = instance
+    self.ShopConfig = require(self.Instance:WaitForChild("Inventory"))
+
+    self.StoreName = self.ShopConfig.StoreName
+
+    self:onRefresh()
+    _CS:GetInstanceAddedSignal("Shop"):Connect(function()
+        self:onRefresh()
+    end)
+
+    return self
 end
+
+return Shop

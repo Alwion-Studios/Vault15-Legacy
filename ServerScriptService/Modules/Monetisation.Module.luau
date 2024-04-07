@@ -60,6 +60,7 @@ end
 
 function module.RedeemGamepass(player: Player, id: number)
   if not player or not id then return false end
+  
   if module.PendingRedemptions[player.UserId] and module.PendingRedemptions[player.UserId][id] and (os.time() - module.PendingRedemptions[player.UserId][id]["redemptionTime"] < redemptionCountdownTime) then
     module.PendingRedemptions[player.UserId][id] = nil
     return false
@@ -84,9 +85,25 @@ function module.RedeemGamepass(player: Player, id: number)
   return true
 end
 
+function module.GetGamepassRedemptionStatus(player: Player, gamepassId: number)
+  if not player or not gamepassId then return false end
+  local s, res = pcall(_MPS.UserOwnsGamePassAsync, _MPS, player.UserId, gamepassId)
+    
+  if not s or not res then
+    return false
+  end
+
+  if not module.PendingRedemptions[player.UserId] or not module.PendingRedemptions[player.UserId][gamepassId] then
+    return true
+  end
+
+  return module.PendingRedemptions[player.UserId][gamepassId]["redemptionTime"], redemptionCountdownTime
+end
+
 function module:Initialise()
   Remotes.RedeemGamepass.OnServerInvoke = self.RedeemGamepass
   Remotes.GetUserGamepasses.OnServerInvoke = self.GetGamepasses
+  Remotes.GetGamepassRedemptionStatus.OnServerInvoke = self.GetGamepassRedemptionStatus
 end
 
 return module

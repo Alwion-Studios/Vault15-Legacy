@@ -48,6 +48,13 @@ local Items = {
 		Type = "Secondary"
 	},
 
+	["Gamepass10mmPistol"] = {
+		Name = "10mm Pistol (Gamepass)",
+		Value = 100,
+		Type = "Secondary",
+		GamepassId = 755960403
+	},
+
 	Minigun = {
 		Name = "Minigun",
 		Value = 10000,

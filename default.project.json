@@ -76,6 +76,9 @@
                 },
                 "RedeemGamepass": {
                     "$className": "RemoteFunction"
+                },
+                "GetGamepassRedemptionStatus": {
+                    "$className": "RemoteFunction"
                 }
             },
 
