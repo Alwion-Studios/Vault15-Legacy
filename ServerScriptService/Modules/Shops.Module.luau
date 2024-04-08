@@ -51,7 +51,8 @@ function module.PurchaseItem(player: Player, currentCategoryId: string, name: st
         local status, _ = session:SetKey({}, name, (session["Structure"][name] + inventory[currentCategoryId][name]["Quantity"])):await()
         if capStatus and status then
             notifyRemote:FireClient(player, "Purchase", `You've successfully purchased {inventory[currentCategoryId][name]["Quantity"]} {name}(s)!`)
-            return print(`[SS] {player.Name} has successfully purchased {inventory[currentCategoryId][name]["Quantity"]} {name}(s) for {itmTemplate[name].Value}`) 
+            print(`[SS] {player.Name} has successfully purchased {inventory[currentCategoryId][name]["Quantity"]} {name}(s) for {itmTemplate[name].Value}`)
+            return true
         end
     else
         local capStatus, _ = session:SetKey({}, "Caps", (session["Structure"]["Caps"] - itmTemplate[name].Value)):await()
@@ -61,9 +62,12 @@ function module.PurchaseItem(player: Player, currentCategoryId: string, name: st
 
         if capStatus then
             notifyRemote:FireClient(player, "Purchase", `You've successfully purchased {name}!`)
-            return print(`[SS] {player.Name} has successfully purchased {name} for {itmTemplate[name].Value}`) 
+            print(`[SS] {player.Name} has successfully purchased {name} for {itmTemplate[name].Value}`) 
+            return true
         end
     end
+
+    return false
 end
 
 function module:Initialise()

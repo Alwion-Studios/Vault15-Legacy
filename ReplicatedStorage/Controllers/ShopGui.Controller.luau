@@ -64,7 +64,7 @@ local module = {
 
 local function findModelInCategory(category, modelToFind)
     for name, value in pairs(category) do
-        if name == "AnimationDirection" or name == "CategoryName" or name == "ModelInstance" then continue end
+        if name == "AnimationDirection" or name == "CategoryName" or name == "ModelInstance" or name == "X" or name == "Y" or name == "Z" then continue end
         if value["GunInstance"] == modelToFind then return name, value end
     end
     return false
@@ -76,7 +76,7 @@ function module:SwitchCategory(categoryName: string, categoryTbl: table)
     if self.itemDetails then
         local instance: Model = self.itemDetails["GunInstance"]
 
-        Tween(instance.PrimaryPart, 0.5, "Quad", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        Tween(instance.PrimaryPart, 0.25, "Quad", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
         self.UI.ItemDetails.Visible = false
     end
 
@@ -86,8 +86,8 @@ function module:SwitchCategory(categoryName: string, categoryTbl: table)
     task.spawn(function()
         self.debounce = true
         for name, items in self.categoryTbl do 
-            if name == "CategoryName" or name == "ModelInstance" or name == "AnimationDirection" then continue end
-            task.wait(1.1)
+            if name == "CategoryName" or name == "ModelInstance" or name == "AnimationCycle" or name == "X" or name == "Y" or name == "Z" then continue end
+            task.wait(0.95)
             self.debounce = false
             return self:SwitchItem(name, items)
         end
@@ -97,7 +97,7 @@ end
 function module:SwitchItem(name: string, itemTbl: table)
     if self.itemDetails == itemTbl then
         local instance: Model = self.itemDetails["GunInstance"]
-        Tween(instance.PrimaryPart, 0.5, "Quad", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        Tween(instance.PrimaryPart, 0.25, "Quad", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
         self.itemDetails = nil
         self:RefreshItemGui()
         return false
@@ -117,15 +117,15 @@ function module:SwitchItem(name: string, itemTbl: table)
 
         local calculation
 
-        if self.categoryTbl["AnimationDirection"] and self.categoryTbl["AnimationDirection"] == "Up" then 
+        if self.categoryTbl["AnimationCycle"] and self.categoryTbl["AnimationCycle"] == "Opposite" then 
             calculation = (
-                CFrame.new(instance.PrimaryPart.Position.X, instance.PrimaryPart.Position.Y+1, instance.PrimaryPart.Position.Z)
-                * CFrame.Angles(math.rad(instance.PrimaryPart.Orientation.X), math.rad(instance.PrimaryPart.Orientation.Y), math.rad(instance.PrimaryPart.Orientation.Z))
+                CFrame.new(instance.PrimaryPart.Position.X-self.categoryTbl["X"], instance.PrimaryPart.Position.Y-self.categoryTbl["Y"], instance.PrimaryPart.Position.Z-1-self.categoryTbl["Z"])
+                * instance.PrimaryPart.CFrame.Rotation
             )
         else
             calculation = (
-                CFrame.new(instance.PrimaryPart.Position.X, instance.PrimaryPart.Position.Y, instance.PrimaryPart.Position.Z-1)
-                * CFrame.Angles(math.rad(instance.PrimaryPart.Orientation.X), math.rad(instance.PrimaryPart.Orientation.Y), math.rad(instance.PrimaryPart.Orientation.Z))
+                CFrame.new(instance.PrimaryPart.Position.X+self.categoryTbl["X"], instance.PrimaryPart.Position.Y+self.categoryTbl["Y"], instance.PrimaryPart.Position.Z+self.categoryTbl["Z"])
+                * instance.PrimaryPart.CFrame.Rotation
             )
         end
 
@@ -176,7 +176,7 @@ function module:ExitUI()
     if self.itemDetails then
         local instance: Model = self.itemDetails["GunInstance"]
 
-        Tween(instance.PrimaryPart, 0.5, "Quad", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        Tween(instance.PrimaryPart, 0.25, "Quad", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
         self.UI.ItemDetails.Visible = false
     end
 
@@ -238,11 +238,16 @@ function module:Initialise()
 
     self.UI.ItemDetails.Options.Right.Purchase.Activated:Connect(function()
         if not self.itemDetails or not self.itemName then return false end
+        local status
 
         if not itemData[self.itemName].GamepassId then 
-            remotes.RequestPurchase:InvokeServer(self.currentCategoryId, self.itemName, self.StoreInstance)
+            status = remotes.RequestPurchase:InvokeServer(self.currentCategoryId, self.itemName, self.StoreInstance)
         else
-            remotes.RedeemGamepass:InvokeServer(itemData[self.itemName].GamepassId)
+            status = remotes.RedeemGamepass:InvokeServer(itemData[self.itemName].GamepassId)
+        end
+
+        if status then 
+            self.UI.Sounds.Purchase:Play()
         end
     end)
 

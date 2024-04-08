@@ -40,6 +40,12 @@ local players = {}
 players.__index = players
 
 function players.HandleJoin(player: Player)
+  -- Make sure they're in the alwion studios group
+
+  if player:GetRankInGroup(15603595) < 2 or player:GetRankInGroup(15603595) < 3 then
+    player:Kick("DEV-LOCK: You're not a developer, veteran or QA!")
+  end
+
   -- Award BETA Badge
   pcall(function()
     return BS:AwardBadge(player.UserId, 1701232606423157)

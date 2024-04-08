@@ -34,7 +34,7 @@ local function getClosestPlayerHrp(hrp, dist)
 		local realDist = (tmpHrp.Position - hrp.Position).Unit
 
 		local raycastParams = RaycastParams.new()
-		raycastParams.FilterDescendantsInstances = { tmpChar }
+		raycastParams.FilterDescendantsInstances = { tmpChar, workspace.VaultShop, workspace.Shop }
 		raycastParams.FilterType = Enum.RaycastFilterType.Include
 
 		local rayDestination = tmpHrp.Parent.Head.Position
@@ -44,7 +44,6 @@ local function getClosestPlayerHrp(hrp, dist)
 		local raycastResult = game.Workspace:Raycast(rayOrigin, realDist * dist, raycastParams)
 
 		if raycastResult then
-			print(raycastResult.Instance)
 			if tmpHrp and tmpDist < dist and raycastResult.Instance.Parent == tmpHrp.Parent then
 				closestHrp = tmpHrp
 				dist = tmpDist
@@ -58,7 +57,6 @@ function RigAnimationController:ConfigureRig(rig: Instance)
 	if not rig then
 		return false
 	end
-	print(rig)
 
 	-- Configure and Play the Rig's Idle Animation
 	local animation = rig:FindFirstChild("Idle")
@@ -102,12 +100,12 @@ function RigAnimationController:ConfigureHeadTracking()
 				elseif angle < -math.pi / 3 then
 					angle = -math.pi / 3
 				end
-				neck.C0 = (
+				--[[neck.C0 = (
 					CFrame.new(xOffSet, yOffSet, zOffSet)
 					* CFrame.Angles(0, -angle, 0)
 					* CFrame.Angles(-upAngle, 0, 0)
-				)
-				--Tween(neck, 0.15, "Linear", "In", 0, false, {C0 = (CFrame.new(xOffSet, yOffSet, zOffSet)*CFrame.Angles(0, -angle, 0) * CFrame.Angles(-upAngle, 0, 0))})
+				)]]
+				Tween(neck, 0.15, "Linear", "In", 0, false, {C0 = (CFrame.new(xOffSet, yOffSet, zOffSet)*CFrame.Angles(0, -angle, 0) * CFrame.Angles(-upAngle, 0, 0))})
 			else
 				Tween(
 					neck,
