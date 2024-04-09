@@ -22,7 +22,7 @@ local _UIS = game:GetService("UserInputService")
 local shopObject = require(script.Parent.Parent.Objects["Shop.Object"])
 
 -- Gui Module
-local guiModule = require(script.Parent["PlayerGui.Controller"])
+local guiModule = require(script.Parent["UI.Controller"])
 
 -- Camera Module
 local cameraModule = require(script.Parent["Camera.Controller"])
@@ -85,7 +85,7 @@ function module:SwitchCategory(categoryName: string, categoryTbl: table)
     if self.itemDetails then
         local instance: Model = self.itemDetails["GunInstance"]
 
-        Tween(instance.PrimaryPart, 0.25, "Quad", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        Tween(instance.PrimaryPart, 0.25, "Sine", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
         self.UI.ItemDetails.Visible = false
     end
 
@@ -96,7 +96,7 @@ function module:SwitchCategory(categoryName: string, categoryTbl: table)
         self.debounce = true
         for name, items in self.categoryTbl do 
             if name == "CategoryName" or name == "ModelInstance" or name == "AnimationCycle" or name == "X" or name == "Y" or name == "Z" then continue end
-            task.wait(0.95)
+            task.wait(1)
             self.debounce = false
             return self:SwitchItem(name, items)
         end
@@ -108,7 +108,7 @@ function module:SwitchItem(name: string, itemTbl: table)
 
     if self.itemDetails == itemTbl then
         local instance: Model = self.itemDetails["GunInstance"]
-        Tween(instance.PrimaryPart, 0.25, "Quad", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        Tween(instance.PrimaryPart, 0.25, "Sine", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
         self.itemDetails = nil
         self:RefreshItemGui()
         return false
@@ -116,7 +116,7 @@ function module:SwitchItem(name: string, itemTbl: table)
 
     if self.itemDetails then
         local instance: Model = self.itemDetails["GunInstance"]
-        Tween(instance.PrimaryPart, 0.5, "Quad", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        Tween(instance.PrimaryPart, 0.5, "Sine", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
     end
 
     self.itemName = name
@@ -141,7 +141,7 @@ function module:SwitchItem(name: string, itemTbl: table)
             )
         end
 
-        Tween(instance.PrimaryPart, 0.5, "Quad", "Out", false, {["CFrame"] = calculation})
+        Tween(instance.PrimaryPart, 0.5, "Sine", "Out", false, {["CFrame"] = calculation})
     end
 
     self.debounce = false
@@ -183,6 +183,10 @@ end
 
 function module:ExitUI()
     if not self.MouseConnectionID then return false end
+    cameraModule:ResetCamera()
+
+    _CAS:UnbindAction("MOVE_RIGHT")
+    _CAS:UnbindAction("MOVE_LEFT")
 
     mouseModule:Disconnect(self.MouseConnectionID)
     self.MouseConnectionID = nil
@@ -190,7 +194,7 @@ function module:ExitUI()
     if self.itemDetails then
         local instance: Model = self.itemDetails["GunInstance"]
 
-        Tween(instance.PrimaryPart, 0.25, "Quad", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        Tween(instance.PrimaryPart, 0.25, "Sine", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
         self.UI.ItemDetails.Visible = false
     end
 
@@ -200,16 +204,13 @@ function module:ExitUI()
         dropdownOption:Destroy()
     end
 
-    _CAS:UnbindAction("MOVE_RIGHT")
-    _CAS:UnbindAction("MOVE_LEFT")
-
     self.storeConfig = nil;
     self.itemDetails = nil;
     self.itemName = nil;
     self.categoryTbl = nil;
 
-    cameraModule:ResetCamera()
     guiModule:SwitchGui("mainGui")
+    self.debounce = false
 end
 
 local function handleAction(direction, inputState, _inputObject)
@@ -318,19 +319,53 @@ function module:Initialise()
     end)
 
     self.UI.Exit.Activated:Connect(function()
+        if self.debounce == true then return false end
         self:ExitUI()
     end)
 
-    self.UI.Caps.Caps.Text = formatter(self.SaveFile:WaitForChild("Caps").Value)
+    self.UI.Box.Caps.Caps.Text = formatter(self.SaveFile:WaitForChild("Caps").Value)
     self.SaveFile:WaitForChild("Caps").Changed:Connect(function(newVal)
-    self.UI.Caps.Caps.Text = formatter(newVal)
+        self.UI.Box.Caps.Caps.Text = formatter(newVal)
+    end)
+
+    self.UI.Box.Bullets.Bullets.Text = formatter(self.SaveFile:WaitForChild("Bullet").Value)
+    self.SaveFile:WaitForChild("Bullet").Changed:Connect(function(newVal)
+        self.UI.Box.Bullets.Bullets.Text = formatter(newVal)
 
     --[[if currCapAnim then
         coroutine.close(currCapAnim)
     end
 
     currCapAnim = coroutine.create(function()
-        countAnim(tonumber(LeftBox.Caps.Text), newVal, LeftBox.Caps)
+        countAnim(tonumber(self.UI.Box.Caps.Text), newVal, self.UI.Box.Caps)
+    end)
+    coroutine.resume(currCapAnim)]]
+    end)
+
+    self.UI.Box.FusionCells.FusionCells.Text = formatter(self.SaveFile:WaitForChild("FusionCell").Value)
+    self.SaveFile:WaitForChild("FusionCell").Changed:Connect(function(newVal)
+        self.UI.Box.FusionCells.FusionCells.Text = formatter(newVal)
+
+    --[[if currCapAnim then
+        coroutine.close(currCapAnim)
+    end
+
+    currCapAnim = coroutine.create(function()
+        countAnim(tonumber(self.UI.Box.Caps.Text), newVal, self.UI.Box.Caps)
+    end)
+    coroutine.resume(currCapAnim)]]
+    end)
+
+    self.UI.Box.PlasmaCells.PlasmaCells.Text = formatter(self.SaveFile:WaitForChild("PlasmaCell").Value)
+    self.SaveFile:WaitForChild("PlasmaCell").Changed:Connect(function(newVal)
+        self.UI.Box.PlasmaCells.PlasmaCells.Text = formatter(newVal)
+
+    --[[if currCapAnim then
+        coroutine.close(currCapAnim)
+    end
+
+    currCapAnim = coroutine.create(function()
+        countAnim(tonumber(self.UI.Box.Caps.Text), newVal, self.UI.Box.Caps)
     end)
     coroutine.resume(currCapAnim)]]
     end)

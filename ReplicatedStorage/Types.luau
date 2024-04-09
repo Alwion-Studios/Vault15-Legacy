@@ -33,4 +33,10 @@ export type UICreationOptions = {
     title: string
 }
 
+export type frame = {
+    Pos: {},
+    UI: Frame,
+    Open: boolean
+}
+
 return nil

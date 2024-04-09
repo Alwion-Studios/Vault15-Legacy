@@ -14,92 +14,211 @@
 
 --Imports
 local _RS = game:GetService("ReplicatedStorage")
-local _CS = game:GetService("CollectionService")
 local _PS = game:GetService("Players")
-local _SGUI = game:GetService('StarterGui')
+local _CAS = game:GetService("ContextActionService")
 
--- Object
-local shopObject = require(script.Parent.Parent.Objects["Shop.Object"])
+-- Types
+local types = require(_RS.Types)
 
 -- Remotes
 local remotes = _RS.Remotes
-local shopGuiRemote: BindableEvent = remotes.ShopGUI
 
--- Core Call
-local coreCall do
-	local MAX_RETRIES = 8
+-- Formatting Function
+local formatter = require(_RS.Formatting.Number)
 
-	local StarterGui = game:GetService('StarterGui')
-	local RunService = game:GetService('RunService')
+-- PlayerUI
+local PlayerGui = _PS.LocalPlayer:WaitForChild("PlayerGui")
 
-	function coreCall(method, ...)
-		local result = {}
-		for retries = 1, MAX_RETRIES do
-			result = {pcall(StarterGui[method], StarterGui, ...)}
-			if result[1] then
-				break
-			end
-			RunService.Stepped:Wait()
-		end
-		return unpack(result)
-	end
-end
+-- SaveFile
+local SaveFile = _PS.LocalPlayer:WaitForChild("SaveFile")
+
+-- UI to Target
+local GUI = PlayerGui:WaitForChild("ScreenGui")
+
+-- UI Frames
+local LeftBox = GUI:WaitForChild("LeftBox")
+
+-- Tween Function
+local tween = require(_RS.Functions.Tween)
 
 local module = {
-    player = _PS.LocalPlayer;
-    playerGui = _PS.LocalPlayer.PlayerGui;
-    playerScripts = _PS.LocalPlayer.PlayerScripts;
-    playerModule = require(_PS.LocalPlayer.PlayerScripts:WaitForChild("PlayerModule"));
-
-    -- UIs
-    shopGui = {
-        Instance = _PS.LocalPlayer.PlayerGui:WaitForChild("ShopUI");
-        DisableMovement = true;
-        DisableRobloxUIs = true;
-        DisableResets = true;
+    menus = {
+        Menu = {
+            Pos = {
+                ["InFocus"]=UDim2.new(0.5,0,0.5,0),
+                ["Away"]=UDim2.new(0.5,0,2,0)
+            },
+            UI = GUI:WaitForChild("Menu"),
+            Open = false,
+            KeyBind = Enum.KeyCode.G,
+            CloseBtn = GUI:WaitForChild("Menu"):WaitForChild("Title").Close,
+            OpenBtn = GUI:WaitForChild("OpenMenu")
+        },
+    
+        Donations = {
+            Pos = {
+                ["InFocus"]=UDim2.new(0.5,0,0.5,0),
+                ["Away"]=UDim2.new(0.5,0,2,0)
+            },
+            UI = GUI:WaitForChild("Donations"),
+            Open = false,
+            KeyBind = Enum.KeyCode.H,
+            CloseBtn = GUI:WaitForChild("Donations"):WaitForChild("Title").Close,
+            OpenBtn = GUI:WaitForChild("OpenDonations")
+        },
+    
+        Codes = {
+            Pos = {
+                ["InFocus"]=UDim2.new(0.5,0,0.5,0),
+                ["Away"]=UDim2.new(0.5,0,2,0)
+            },
+            UI = GUI:WaitForChild("Codes"),
+            Open = false,
+            KeyBind = Enum.KeyCode.B,
+            CloseBtn = GUI:WaitForChild("Codes"):WaitForChild("Title").Close,
+            OpenBtn = GUI:WaitForChild("OpenCodes")
+        },
+    
+        Shop = {
+            Pos = {
+                ["InFocus"]=UDim2.new(0.5,0,0.5,0),
+                ["Away"]=UDim2.new(0.5,0,2,0)
+            },
+            UI = GUI:WaitForChild("Shop"),
+            Open = false,
+            CloseBtn = GUI:WaitForChild("Shop"):WaitForChild("Title").Close,
+            ClearScrollingFrame = GUI:WaitForChild("Shop").Items.ScrollingFrame
+        }
     };
 
-    mainGui = {
-        Instance = _PS.LocalPlayer.PlayerGui:WaitForChild("ScreenGui");
-    };
+    openMenu = nil,
+    debounce = nil,
+    animationsEnabled = true,
 }
 
-function module:SwitchGui(guiName: string)
-    if not self[guiName] then return false end
-
-    if self.openUI then
-        self.openUI.Instance.Enabled = false
-        self.openUI = nil
-    end
-
-    self.openUI = self[guiName]
-    self.openUI.Instance.Enabled = true
-
-    if self.openUI.DisableResets then 
-        assert(coreCall('SetCore', 'ResetButtonCallback', false))
+function module:ToggleAnimations()
+    if self.animationsEnabled == true then
+        self.animationsEnabled = false
     else
-        assert(coreCall('SetCore', 'ResetButtonCallback', true))
+        self.animationsEnabled = true
     end
 
-    if self.openUI.DisableRobloxUIs then
-        -- Disable UIs
-        _SGUI:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
-    else
-        -- Enable UIs
-        _SGUI:SetCoreGuiEnabled(Enum.CoreGuiType.All, true)
+    return self.animationsEnabled
+end
+
+function module:CloseUI(frame: types.frame)
+    if self.debounce and self.debounce == true then return false end
+
+    self.debounce = true
+
+    if frame.ClearScrollingFrame and #frame.ClearScrollingFrame:GetChildren() > 0 then 
+        for _, button in pairs(frame.ClearScrollingFrame:GetChildren()) do
+            if not button:IsA("UIListLayout") then button:Destroy() end
+        end
     end
 
-    if self.openUI.DisableMovement then
-        -- Disable movement
-        self.playerModule:GetControls():Disable()
+    if self.animationsEnabled and self.animationsEnabled == true then
+        tween(frame.UI, 0.35, "Exponential", "In", 0, false, {["Position"]=frame.Pos["Away"]})
     else
-        -- Enable Movement
-        self.playerModule:GetControls():Enable()
+        frame.UI.Position = frame.Pos["Away"]
     end
+
+    self.openMenu = nil
+    self.debounce = nil
+end
+
+function module:OpenUI(frame: types.frame)
+    if self.debounce and self.debounce == true  then return false end
+    self.debounce = true
+
+    if self.openMenu then 
+        self.debounce = false
+        if self.openMenu == frame then return self:CloseUI(self.openMenu) end
+        self:CloseUI(self.openMenu)
+        task.wait(0.35)
+    end
+    self.openMenu = frame
+
+    if self.animationsEnabled and self.animationsEnabled == true then
+        tween(frame.UI, 0.35, "Exponential", "Out", 0, false, {["Position"]=frame.Pos["InFocus"]})
+    else
+        frame.UI.Position = frame.Pos["InFocus"]
+    end
+
+    self.debounce = nil
+end
+
+local function handleKey(menu: string, inputState:Enum.UserInputState, inputObject: InputObject)
+    if inputState ~= Enum.UserInputState.Begin or not module.menus[menu] then return false end
+    module:OpenUI(module.menus[menu])
 end
 
 function module:Initialise()
-    self:SwitchGui("mainGui")
+    for name, menu: types.frame in pairs(self.menus) do
+        if menu.OpenBtn then 
+            menu.OpenBtn.Activated:Connect(function()
+                self:OpenUI(menu)
+            end)
+        end
+
+        if menu.CloseBtn then 
+            menu.CloseBtn.Activated:Connect(function()
+                self:CloseUI(menu)
+            end)
+        end
+
+        if menu.KeyBind then
+            _CAS:BindAction(name, handleKey, true, menu.KeyBind)
+        end
+
+        self:CloseUI(menu)
+    end
+
+    -- Box Code
+    LeftBox.MouseMoved:Connect(function()
+        if self.animationsEnabled and self.animationsEnabled == true then
+            tween(LeftBox, 0.5, "Exponential", "Out", 0, false, {["Size"]=UDim2.new(0,180,0,120)})
+        else
+            LeftBox.Size = UDim2.new(0,180,0,120)
+        end
+
+        LeftBox.Bullets.Visible = true
+        LeftBox.FusionCells.Visible = true
+        LeftBox.PlasmaCells.Visible = true
+    end)
+  
+    LeftBox.MouseLeave:Connect(function()
+        if self.animationsEnabled and self.animationsEnabled == true then
+            tween(LeftBox, 0.25, "Exponential", "In", 0, false, {["Size"]=UDim2.new(0,180,0,58)})
+        else
+            LeftBox.Size = UDim2.new(0,180,0,58)
+        end
+
+        LeftBox.Bullets.Visible = false
+        LeftBox.FusionCells.Visible = false
+        LeftBox.PlasmaCells.Visible = false
+    end)
+      
+    -- Left Box Caps Rendering
+    LeftBox.Caps.Caps.Text = formatter(SaveFile:WaitForChild("Caps").Value)
+    SaveFile:WaitForChild("Caps").Changed:Connect(function(newVal)
+        LeftBox.Caps.Caps.Text = formatter(newVal)
+    end)
+    
+    LeftBox.Bullets.Bullets.Text = formatter(SaveFile:WaitForChild("Bullet").Value)
+    SaveFile:WaitForChild("Bullet").Changed:Connect(function(newVal)
+        LeftBox.Bullets.Bullets.Text = formatter(newVal)
+    end)
+    
+    LeftBox.FusionCells.FusionCells.Text = formatter(SaveFile:WaitForChild("FusionCell").Value)
+    SaveFile:WaitForChild("FusionCell").Changed:Connect(function(newVal)
+        LeftBox.FusionCells.FusionCells.Text = formatter(newVal)
+    end)
+    
+    LeftBox.PlasmaCells.PlasmaCells.Text = formatter(SaveFile:WaitForChild("PlasmaCell").Value)
+    SaveFile:WaitForChild("PlasmaCell").Changed:Connect(function(newVal)
+        LeftBox.PlasmaCells.PlasmaCells.Text = formatter(newVal)
+    end)
 end
 
 return module

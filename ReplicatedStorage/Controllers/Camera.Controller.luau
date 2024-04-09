@@ -30,7 +30,7 @@ local module = {
 function module:RenderCameraOnPart(part: Part)
     local position: Vector3 = part.Position + part.CFrame.LookVector * 5
     self.camera.CameraType = Enum.CameraType.Scriptable
-    Tween(self.camera, 1, "Quad", "In", false, {["CFrame"] = CFrame.lookAt(position, part.Position)})
+    Tween(self.camera, 1, "Sine", "In", false, {["CFrame"] = CFrame.lookAt(position, part.Position)})
 end
 
 function module:ResetCamera()
