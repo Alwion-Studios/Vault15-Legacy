@@ -62,7 +62,19 @@ local module = {
     mainGui = {
         Instance = _PS.LocalPlayer.PlayerGui:WaitForChild("ScreenGui");
     };
+
+    animationsEnabled = true
 }
+
+function module:ToggleAnimations()
+    if self.animationsEnabled == true then
+        self.animationsEnabled = false
+    else
+        self.animationsEnabled = true
+    end
+
+    return self.animationsEnabled
+end
 
 function module:SwitchGui(guiName: string)
     if not self[guiName] then return false end

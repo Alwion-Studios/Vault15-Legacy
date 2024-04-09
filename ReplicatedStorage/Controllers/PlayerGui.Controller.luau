@@ -26,6 +26,9 @@ local remotes = _RS.Remotes
 -- Formatting Function
 local formatter = require(_RS.Formatting.Number)
 
+-- UI Controller
+local ui_controller = require(_RS.Controllers["UI.Controller"])
+
 -- PlayerUI
 local PlayerGui = _PS.LocalPlayer:WaitForChild("PlayerGui")
 
@@ -93,17 +96,16 @@ local module = {
 
     openMenu = nil,
     debounce = nil,
-    animationsEnabled = true,
 }
 
 function module:ToggleAnimations()
-    if self.animationsEnabled == true then
-        self.animationsEnabled = false
+    if ui_controller.animationsEnabled == true then
+        ui_controller.animationsEnabled = false
     else
-        self.animationsEnabled = true
+        ui_controller.animationsEnabled = true
     end
 
-    return self.animationsEnabled
+    return ui_controller.animationsEnabled
 end
 
 function module:CloseUI(frame: types.frame)
@@ -117,7 +119,7 @@ function module:CloseUI(frame: types.frame)
         end
     end
 
-    if self.animationsEnabled and self.animationsEnabled == true then
+    if ui_controller.animationsEnabled and ui_controller.animationsEnabled == true then
         tween(frame.UI, 0.35, "Exponential", "In", 0, false, {["Position"]=frame.Pos["Away"]})
     else
         frame.UI.Position = frame.Pos["Away"]
@@ -135,11 +137,14 @@ function module:OpenUI(frame: types.frame)
         self.debounce = false
         if self.openMenu == frame then return self:CloseUI(self.openMenu) end
         self:CloseUI(self.openMenu)
-        task.wait(0.35)
+        
+        if ui_controller.animationsEnabled and ui_controller.animationsEnabled == true then
+            task.wait(0.35)
+        end
     end
     self.openMenu = frame
 
-    if self.animationsEnabled and self.animationsEnabled == true then
+    if ui_controller.animationsEnabled and ui_controller.animationsEnabled == true then
         tween(frame.UI, 0.35, "Exponential", "Out", 0, false, {["Position"]=frame.Pos["InFocus"]})
     else
         frame.UI.Position = frame.Pos["InFocus"]
@@ -176,7 +181,7 @@ function module:Initialise()
 
     -- Box Code
     LeftBox.MouseMoved:Connect(function()
-        if self.animationsEnabled and self.animationsEnabled == true then
+        if ui_controller.animationsEnabled and ui_controller.animationsEnabled == true then
             tween(LeftBox, 0.5, "Exponential", "Out", 0, false, {["Size"]=UDim2.new(0,180,0,120)})
         else
             LeftBox.Size = UDim2.new(0,180,0,120)
@@ -188,7 +193,7 @@ function module:Initialise()
     end)
   
     LeftBox.MouseLeave:Connect(function()
-        if self.animationsEnabled and self.animationsEnabled == true then
+        if ui_controller.animationsEnabled and ui_controller.animationsEnabled == true then
             tween(LeftBox, 0.25, "Exponential", "In", 0, false, {["Size"]=UDim2.new(0,180,0,58)})
         else
             LeftBox.Size = UDim2.new(0,180,0,58)

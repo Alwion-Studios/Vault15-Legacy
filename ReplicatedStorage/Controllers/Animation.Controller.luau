@@ -123,21 +123,39 @@ function RigAnimationController:ConfigureHeadTracking()
 	end)
 end
 
+local function fanAnimation(instance: UnionOperation)
+	local speed = Random.new():NextNumber(-0.25, -2)
+	while wait(0.0001) do
+		if not RigAnimationController.areFansEnabled then break end
+		instance.CFrame = instance.CFrame * CFrame.Angles(math.rad(speed), 0, 0)
+	end
+end
+
+function RigAnimationController:InitialiseFans()
+	if self.areFansEnabled and self.areFansEnabled == true then return false end
+	for _, instance: UnionOperation in pairs(_CS:GetTagged("Fan")) do
+		task.spawn(fanAnimation, instance)
+	end
+	self.areFansEnabled = true
+end
+
+function RigAnimationController:ToggleAnimations()
+	if self.areFansEnabled and self.areFansEnabled == true then
+		self.areFansEnabled = false
+	else
+		self:InitialiseFans()
+	end
+
+	return self.areFansEnabled
+end
+
 function RigAnimationController:Initialise()
 	for _, rig in pairs(_CS:GetTagged("AnimatedRig")) do
 		self:ConfigureRig(rig)
 	end
 
 	self:ConfigureHeadTracking()
-
-	for _, instance: UnionOperation in pairs(_CS:GetTagged("Fan")) do
-		local speed = Random.new():NextNumber(-0.25, -2)
-		task.spawn(function()
-			while task.wait(0.001) do
-				instance.CFrame = instance.CFrame * CFrame.Angles(math.rad(speed), 0, 0)
-			end
-		end)
-	end
+	self:InitialiseFans()
 end
 
 return RigAnimationController

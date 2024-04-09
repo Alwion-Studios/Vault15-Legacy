@@ -85,7 +85,12 @@ function module:SwitchCategory(categoryName: string, categoryTbl: table)
     if self.itemDetails then
         local instance: Model = self.itemDetails["GunInstance"]
 
-        Tween(instance.PrimaryPart, 0.25, "Sine", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        if guiModule.animationsEnabled then
+            Tween(instance.PrimaryPart, 0.25, "Sine", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        else
+            instance.PrimaryPart.CFrame = self.itemDetails["DefaultPosition"]
+        end
+
         self.UI.ItemDetails.Visible = false
     end
 
@@ -96,7 +101,11 @@ function module:SwitchCategory(categoryName: string, categoryTbl: table)
         self.debounce = true
         for name, items in self.categoryTbl do 
             if name == "CategoryName" or name == "ModelInstance" or name == "AnimationCycle" or name == "X" or name == "Y" or name == "Z" then continue end
-            task.wait(1)
+            
+            if guiModule.animationsEnabled then
+                task.wait(1)
+            end
+            
             self.debounce = false
             return self:SwitchItem(name, items)
         end
@@ -108,7 +117,13 @@ function module:SwitchItem(name: string, itemTbl: table)
 
     if self.itemDetails == itemTbl then
         local instance: Model = self.itemDetails["GunInstance"]
-        Tween(instance.PrimaryPart, 0.25, "Sine", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        
+        if guiModule.animationsEnabled then
+            Tween(instance.PrimaryPart, 0.25, "Sine", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        else
+            instance.PrimaryPart.CFrame = self.itemDetails["DefaultPosition"]
+        end
+
         self.itemDetails = nil
         self:RefreshItemGui()
         return false
@@ -116,7 +131,11 @@ function module:SwitchItem(name: string, itemTbl: table)
 
     if self.itemDetails then
         local instance: Model = self.itemDetails["GunInstance"]
-        Tween(instance.PrimaryPart, 0.5, "Sine", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        if guiModule.animationsEnabled then
+            Tween(instance.PrimaryPart, 0.5, "Sine", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        else
+            instance.PrimaryPart.CFrame = self.itemDetails["DefaultPosition"]
+        end
     end
 
     self.itemName = name
@@ -141,7 +160,11 @@ function module:SwitchItem(name: string, itemTbl: table)
             )
         end
 
-        Tween(instance.PrimaryPart, 0.5, "Sine", "Out", false, {["CFrame"] = calculation})
+        if guiModule.animationsEnabled then
+            Tween(instance.PrimaryPart, 0.5, "Sine", "Out", false, {["CFrame"] = calculation})
+        else
+            instance.PrimaryPart.CFrame = calculation
+        end
     end
 
     self.debounce = false
@@ -194,7 +217,12 @@ function module:ExitUI()
     if self.itemDetails then
         local instance: Model = self.itemDetails["GunInstance"]
 
-        Tween(instance.PrimaryPart, 0.25, "Sine", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        if guiModule.animationsEnabled then
+            Tween(instance.PrimaryPart, 0.25, "Sine", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
+        else
+            instance.PrimaryPart.CFrame = self.itemDetails["DefaultPosition"]
+        end
+
         self.UI.ItemDetails.Visible = false
     end
 

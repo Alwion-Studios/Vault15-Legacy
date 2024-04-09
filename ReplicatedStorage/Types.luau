@@ -34,9 +34,14 @@ export type UICreationOptions = {
 }
 
 export type frame = {
-    Pos: {},
+    Pos: {
+        InFocus: UDim2,
+        Away: UDim2
+    },
     UI: Frame,
-    Open: boolean
+    Open: boolean,
+    CloseBtn: TextButton,
+    ClearScrollingFrame: ScrollingFrame
 }
 
 return nil
