@@ -95,6 +95,16 @@ function Door:Open()
         --DoorService.Doors[self.Instance.Name] = self
     end
 
+    -- Turn off cancollide
+    for _, instance: Instance in pairs(self.Instance:GetDescendants()) do 
+        if not instance:IsA("Part") or not instance:IsA("Union") or not instance:IsA("UnionOperation") then continue end
+        if instance.Parent.Name == "Sign" then continue end
+
+        instance.CanCollide = false
+        instance.CanTouch = false
+        instance.CanQuery = false
+    end
+
     self.IsOpen = true
     Remotes.DoorTrigger:FireAllClients(self.Instance, self.Positions["Open"])
     return true
@@ -132,6 +142,16 @@ function Door:Close()
             };
         end
         --DoorService.Doors[self.Instance.Name] = self
+    end
+
+    -- Turn on cancollide
+    for _, instance: Instance in pairs(self.Instance:GetDescendants()) do 
+        if not instance:IsA("Part") or not instance:IsA("Union") or not instance:IsA("UnionOperation") then continue end
+        if instance.Parent.Name == "Sign" then continue end
+
+        instance.CanCollide = false
+        instance.CanTouch = false
+        instance.CanQuery = false
     end
 
     self.IsOpen = false

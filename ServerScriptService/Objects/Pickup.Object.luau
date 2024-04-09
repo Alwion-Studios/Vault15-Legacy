@@ -44,7 +44,11 @@ function Pickup:ShowPickup()
     end
 
     if self.Light then 
-        self.Light.Enabled = false
+        self.Light.Enabled = true
+    end
+
+    if self.Particles then 
+        self.Particles.Enabled = true
     end
 
     if self.waitCoroutine then
@@ -87,24 +91,34 @@ function Pickup:HandleTrigger(player: Player)
         self.Light.Enabled = false
     end
 
+    if self.Particles then 
+        self.Particles.Enabled = false
+    end
+
     self.waitCoroutine = coroutine.create(function()
-        task.wait(40)
+        task.wait(self.TimeToWait)
         self:ShowPickup()
     end)
     coroutine.resume(self.waitCoroutine)
 end
 
-function Pickup.New(instance, opt)
+function Pickup.New(instance: Instance, opt: table)
     if not instance or not opt then return false end
 
     local self = setmetatable({}, Pickup)
 
     if opt.Category == "Nuka-Cola Quantum Cap" then 
         self.Light = instance:WaitForChild("Main").PointLight
+        self.Particles = instance:WaitForChild("Main").ParticleEmitter
     end
 
     if opt.Category == "Nuka-Cola Quantum Cap" or opt.Category == "Nuka-Cola Grape Cap" or opt.Category == "Nuka-Cola Cap" then 
         opt.Category = "Caps"
+    end
+
+    self.TimeToWait = 60
+    if instance:FindFirstChild("TimeTillRespawn") then 
+        self.TimeToWait = instance:WaitForChild("TimeTillRespawn").Value
     end
 
     self.Value = opt.Value
@@ -112,9 +126,14 @@ function Pickup.New(instance, opt)
     self.Instance = instance
 
     self.PromptInstance = RS:WaitForChild("Storage"):WaitForChild("PickupPrompt"):Clone()
-    self.PromptInstance.Parent = self.Instance:WaitForChild("Main")
+    self.PromptInstance.Parent = self.Instance
     self.PromptInstance.ActionText = `Pickup`
-    self.PromptInstance.ObjectText = `({self.Value}) {instance.Name}`
+
+    if self.Value > 1 then 
+        self.PromptInstance.ObjectText = `{self.Value} {instance.Name}s`
+    else
+        self.PromptInstance.ObjectText = `{instance.Name}`
+    end
 
     self.PromptInstance.Triggered:Connect(function(player)
         self.PendingTrigger = pcall(self:HandleTrigger(player), self)

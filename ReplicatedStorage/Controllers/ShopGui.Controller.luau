@@ -16,6 +16,7 @@
 local _RS = game:GetService("ReplicatedStorage")
 local _CAS = game:GetService("ContextActionService")
 local _PS = game:GetService("Players")
+local _UIS = game:GetService("UserInputService")
 
 -- Object
 local shopObject = require(script.Parent.Parent.Objects["Shop.Object"])
@@ -36,8 +37,14 @@ local shopGuiRemote: BindableEvent = remotes.ShopGUI
 -- Item Details
 local itemData = require(_RS.ItemData)
 
+-- GUI Templates
+local guiTemplates = _RS.GuiTemplates
+
 -- Formatting Function
 local formatter = require(_RS.Formatting.Number)
+
+-- Size Calculation Function
+local sizeCalculations = require(script.Parent.Parent.Functions.sizeCalculations)
 
 -- Tween Function
 local function Tween(Object, Time, Style, Direction, Repeat, Customization)
@@ -71,6 +78,8 @@ local function findModelInCategory(category, modelToFind)
 end
 
 function module:SwitchCategory(categoryName: string, categoryTbl: table)
+    if self.debounce == true then return false end
+
     self.UI.Top.Category.Text = categoryName
 
     if self.itemDetails then
@@ -95,6 +104,8 @@ function module:SwitchCategory(categoryName: string, categoryTbl: table)
 end
 
 function module:SwitchItem(name: string, itemTbl: table)
+    if self.debounce == true then return false end
+
     if self.itemDetails == itemTbl then
         local instance: Model = self.itemDetails["GunInstance"]
         Tween(instance.PrimaryPart, 0.25, "Quad", "In", false, {["CFrame"] = self.itemDetails["DefaultPosition"]})
@@ -114,6 +125,7 @@ function module:SwitchItem(name: string, itemTbl: table)
 
     if self.itemDetails["GunInstance"] then 
         local instance: Model = self.itemDetails["GunInstance"]
+        instance.PrimaryPart.CFrame = self.itemDetails["DefaultPosition"]
 
         local calculation
 
@@ -131,6 +143,8 @@ function module:SwitchItem(name: string, itemTbl: table)
 
         Tween(instance.PrimaryPart, 0.5, "Quad", "Out", false, {["CFrame"] = calculation})
     end
+
+    self.debounce = false
 end
 
 function module:RefreshItemGui()
@@ -180,6 +194,12 @@ function module:ExitUI()
         self.UI.ItemDetails.Visible = false
     end
 
+    -- Destroy Options
+    for id, dropdownOption: TextButton in pairs(self.UI.Top.Category.Dropdown:GetChildren()) do
+        if not dropdownOption:IsA("TextButton") then continue end
+        dropdownOption:Destroy()
+    end
+
     _CAS:UnbindAction("MOVE_RIGHT")
     _CAS:UnbindAction("MOVE_LEFT")
 
@@ -197,13 +217,19 @@ local function handleAction(direction, inputState, _inputObject)
     if inputState and inputState ~= Enum.UserInputState.Begin then return false end
 
     if direction == "MOVE_RIGHT" then 
-        if not module.storeConfig[module.currentCategoryId-1] then return false end
-        module.currentCategoryId -= 1
+        if not module.storeConfig[module.currentCategoryId-1] then 
+            module.currentCategoryId = #module.storeConfig
+        else
+            module.currentCategoryId -= 1
+        end
     end
 
     if direction == "MOVE_LEFT" then 
-        if not module.storeConfig[module.currentCategoryId+1] then return false end
-        module.currentCategoryId += 1
+        if not module.storeConfig[module.currentCategoryId+1] then
+            module.currentCategoryId = 1
+        else
+            module.currentCategoryId += 1
+        end
     end
 
     module:SwitchCategory(module.storeConfig[module.currentCategoryId]["CategoryName"], module.storeConfig[module.currentCategoryId])
@@ -215,6 +241,8 @@ function module:Initialise()
     shopGuiRemote.Event:Connect(function(shopInst: Part, importedConfig: table)
         if not importedConfig then return false end
 
+        self.UI.StoreName.Text = shopInst.Name or "Store"
+
         self.StoreInstance = shopInst
         self.storeConfig = importedConfig
         guiModule:SwitchGui("shopGui")
@@ -222,6 +250,30 @@ function module:Initialise()
         -- Initial Category Selection
         self.currentCategoryId = 3
         self:SwitchCategory(self.storeConfig[self.currentCategoryId]["CategoryName"], self.storeConfig[self.currentCategoryId])
+
+        -- Create Dropdown
+        self.UI.Top.Category.Dropdown.Size = sizeCalculations.calculateYSize(120, #self.storeConfig)
+        self.UI.Top.Category.Dropdown.Visible = false
+
+        self.UI.Top.Category.Activated:Connect(function()
+            if self.UI.Top.Category.Dropdown.Visible then
+                self.UI.Top.Category.Dropdown.Visible = false
+            else
+                self.UI.Top.Category.Dropdown.Visible = true
+            end
+        end)
+
+        -- Create Options
+        for id, dropdownOption in pairs(self.storeConfig) do 
+            local newTextBtn: TextButton = guiTemplates.CategoryBtn:Clone()
+            newTextBtn.Name = id
+            newTextBtn.Text = dropdownOption["CategoryName"]
+            newTextBtn.Parent = self.UI.Top.Category.Dropdown
+            newTextBtn.Activated:Connect(function()
+                self:SwitchCategory(dropdownOption["CategoryName"], dropdownOption)
+            end)
+            newTextBtn:SetAttribute("isDropdown", true)
+        end
 
         self.MouseConnectionID = mouseModule:Connect()
 
@@ -232,6 +284,12 @@ function module:Initialise()
     remotes.MouseClickEvent.Event:Connect(function(id: number, target: Model)
         if not self.MouseConnectionID then return false end
         if self.MouseConnectionID ~= id then return false end
+
+        if target:GetAttribute("isDropdown") then
+            self.UI.Top.Category.Dropdown.Visible = true
+        else
+            self.UI.Top.Category.Dropdown.Visible = false
+        end
 
         self:SwitchItem(findModelInCategory(self.categoryTbl, target.Parent))
     end)

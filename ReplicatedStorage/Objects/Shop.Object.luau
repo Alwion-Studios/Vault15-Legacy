@@ -37,8 +37,8 @@ function Shop:onRefresh()
     proxPrompt.ActionText = "Browse Inventory"
     proxPrompt.Parent = self.Instance
     proxPrompt.HoldDuration = 0.5
-    proxPrompt.RequiresLineOfSight = false
-    proxPrompt.MaxActivationDistance = 20
+    proxPrompt.RequiresLineOfSight = true
+    proxPrompt.MaxActivationDistance = 10
     proxPrompt.TriggerEnded:Connect(function()
         onTrigger(self.Instance, self.ShopConfig)
     end)

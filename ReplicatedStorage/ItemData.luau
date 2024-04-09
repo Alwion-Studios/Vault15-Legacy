@@ -8,13 +8,13 @@ local Items = {
 	
 	PlasmaCell = {
 		Name = "Plasma Cell",
-		Value = 20,
+		Value = 40,
 		Type = "Ammo"
 	},
 	
 	FusionCell = {
 		Name = "Fusion Cell",
-		Value = 10,
+		Value = 20,
 		Type = "Ammo"
 	},
 	
