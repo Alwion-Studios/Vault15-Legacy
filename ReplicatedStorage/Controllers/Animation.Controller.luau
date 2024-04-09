@@ -22,7 +22,7 @@ local _PLR = game:GetService("Players")
 local Tween = require(_RS:WaitForChild("Functions"):WaitForChild("Tween"))
 
 local RigAnimationController = {
-	areFansEnabled = false
+	areFansEnabled = true
 }
 
 -- Get the Rig's Nearest Player
@@ -155,6 +155,7 @@ function RigAnimationController:Initialise()
 	end
 
 	self:ConfigureHeadTracking()
+	self.areFansEnabled = false
 	self:InitialiseFans()
 end
 
