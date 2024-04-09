@@ -24,15 +24,14 @@ local debug_module = require(script.Parent["Debug.Module"])
 
 -- Blacklist
 local blacklist = {
-  [89676078] = {
-      ["Reason"] = "Blacklisted. Contact appeals."
-  },
-  [1178239976] = {
-      ["Reason"] = "Blacklisted. Contact appeals."
-  },
-  [14413902] = {
-      ["Reason"] = "Blacklisted. Contact appeals."
-  }
+  [89676078] = true,
+  [1178239976] = true,
+  [14413902] = true,
+  [2785616570] = true,
+  [3340003283] = true,
+  [2681446762] = true,
+  [4115099163] = true,
+  [5724328655] = true
 }
 
 -- Module
@@ -53,7 +52,7 @@ function players.HandleJoin(player: Player)
 
   -- Handle the Blacklist
   if blacklist[player.UserId] then
-    player:Kick(blacklist[player.UserId].Reason)
+    player:Kick("Blacklisted. Contact appeals.")
     return false
   end
 

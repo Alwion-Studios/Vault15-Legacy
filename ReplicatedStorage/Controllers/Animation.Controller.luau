@@ -21,7 +21,9 @@ local _PLR = game:GetService("Players")
 --Tween Function
 local Tween = require(_RS:WaitForChild("Functions"):WaitForChild("Tween"))
 
-local RigAnimationController = {}
+local RigAnimationController = {
+	areFansEnabled = false
+}
 
 -- Get the Rig's Nearest Player
 local function getClosestPlayerHrp(hrp, dist)

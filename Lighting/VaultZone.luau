@@ -26,8 +26,8 @@ local module = {
 	
 	["BloomEffect"] = {
 		["Intensity"] = 1,
-		["Size"] = 32,
-		["Threshold"] = 2.2,
+		["Size"] = 8,
+		["Threshold"] = 2.5,
 	},
 }
 
