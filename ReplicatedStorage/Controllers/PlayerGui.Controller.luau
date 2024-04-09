@@ -173,7 +173,7 @@ function module:Initialise()
         end
 
         if menu.KeyBind then
-            _CAS:BindAction(name, handleKey, true, menu.KeyBind)
+            _CAS:BindAction(name, handleKey, false, menu.KeyBind)
         end
 
         self:CloseUI(menu)
