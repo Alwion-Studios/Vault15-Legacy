@@ -17,6 +17,7 @@ local _RS = game:GetService("ReplicatedStorage")
 local _CAS = game:GetService("ContextActionService")
 local _PS = game:GetService("Players")
 local _UIS = game:GetService("UserInputService")
+local _MS = game:GetService("MarketplaceService")
 
 -- Object
 local shopObject = require(script.Parent.Parent.Objects["Shop.Object"])
@@ -66,7 +67,8 @@ local module = {
     currentCategoryId = nil;
 
     -- Actions
-    debounce = false
+    debounce = false,
+    timerCheck = false
 }
 
 local function findModelInCategory(category, modelToFind)
@@ -171,6 +173,8 @@ function module:SwitchItem(name: string, itemTbl: table)
 end
 
 function module:RefreshItemGui()
+    self.timerCheck = true
+
     if not self.itemDetails or not itemData[self.itemName] then 
         self.UI.ItemDetails.Visible = false
         return false
@@ -185,15 +189,32 @@ function module:RefreshItemGui()
     self.UI.ItemDetails.Description.Text = itemData[self.itemName].Description or "No Description Provided"
 
     if itemData[self.itemName].GamepassId then
-        local redemptionTime, timeUntilReset = remotes.GetGamepassRedemptionStatus:InvokeServer(itemData[self.itemName].GamepassId)
+        local status = remotes.GetGamepassOwnershipStatus:InvokeServer(itemData[self.itemName].GamepassId)
         self.UI.ItemDetails.TopBar.Price.Text = "Gamepass"
 
-        if not redemptionTime then
+        if not status then 
             self.UI.ItemDetails.Options.Right.Purchase.BackgroundColor3 = Color3.fromRGB(50,255,0)
-        elseif typeof(redemptionTime) ~= "number" then
+        else
             self.UI.ItemDetails.Options.Right.Purchase.BackgroundColor3 = Color3.fromRGB(255,0,150)
             self.UI.ItemDetails.TopBar.Price.Text = "Redeemable"
             self.UI.ItemDetails.Options.Right.Purchase.Text = "Redeem"
+
+            -- Redemption System
+            local redemptionTime, timeUntilReset = remotes.GetGamepassRedemptionStatus:InvokeServer(itemData[self.itemName].GamepassId)
+            if typeof(redemptionTime) == "number" and typeof(timeUntilReset) == "number" then 
+                self.timerCheck = false
+                task.spawn(function()
+                    self.UI.ItemDetails.TopBar.Price.Text = `Redeemable in... 30 seconds`
+                    while wait(1) do
+                        if self.timerCheck then break end
+                        if (os.time()-redemptionTime) > timeUntilReset then
+                            self.UI.ItemDetails.TopBar.Price.Text = "Redeemable"
+                            break
+                        end
+                        self.UI.ItemDetails.TopBar.Price.Text = `Redeemable in... {(timeUntilReset-(os.time()-redemptionTime))} seconds`
+                    end
+                end)
+            end
         end
     else
         self.UI.ItemDetails.Options.Right.Purchase.Text = "Purchase"
@@ -330,12 +351,22 @@ function module:Initialise()
         if not itemData[self.itemName].GamepassId then 
             status = remotes.RequestPurchase:InvokeServer(self.currentCategoryId, self.itemName, self.StoreInstance)
         else
+            status =  remotes.GetGamepassOwnershipStatus:InvokeServer(itemData[self.itemName].GamepassId)
+            if not status then _MS:PromptGamePassPurchase(self.player, itemData[self.itemName].GamepassId) return false end
             status = remotes.RedeemGamepass:InvokeServer(itemData[self.itemName].GamepassId)
         end
 
         if status then 
             self.UI.Sounds.Purchase:Play()
         end
+
+        self:RefreshItemGui()
+    end)
+
+    _MS.PromptGamePassPurchaseFinished:Connect(function(player, gamePassId, wasPurchased)
+        if wasPurchased == false then return false end
+        task.wait(1)
+        self:RefreshItemGui()
     end)
 
     self.UI.Top.Left.Activated:Connect(function()

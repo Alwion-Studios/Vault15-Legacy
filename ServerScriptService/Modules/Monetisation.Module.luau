@@ -22,7 +22,7 @@ local Remotes = _RS.Remotes
 local notifyRemote = Remotes.NotifyUser
 
 -- Variables
-local redemptionCountdownTime = 5
+local redemptionCountdownTime = 30
 
 -- Items Folder
 local itms = _RS.Items
@@ -31,6 +31,18 @@ local module = {
     Gamepasses = {
       [755960403] = {
         ["Reward"] = "10mmPistol"
+      },
+      [780738825] = {
+        ["Reward"] = "AutomaticRifle"
+      },
+      [780293229] = {
+        ["Reward"] = "LaserPistol"
+      },
+      [780313225] = {
+        ["Reward"] = "LaserRifle"
+      },
+      [780319168] = {
+        ["Reward"] = "PlasmaRifle"
       }
     };
     PendingRedemptions = {};
@@ -67,7 +79,7 @@ function module.RedeemGamepass(player: Player, id: number)
   module.PendingRequests[player.UserId] = true
 
   if module.PendingRedemptions[player.UserId] and module.PendingRedemptions[player.UserId][id] and (os.time() - module.PendingRedemptions[player.UserId][id]["redemptionTime"] < redemptionCountdownTime) then
-    module.PendingRedemptions[player.UserId][id] = nil
+    module.PendingRequests[player.UserId] = nil
     notifyRemote:FireClient(player, "Redemption", `You've redeemed this item! Wait for a couple of minutes before trying again.`)
     return false
   end
@@ -108,10 +120,22 @@ function module.GetGamepassRedemptionStatus(player: Player, gamepassId: number)
   return module.PendingRedemptions[player.UserId][gamepassId]["redemptionTime"], redemptionCountdownTime
 end
 
+function module.GetGamepassOwnershipStatus(player: Player, gamepassId: number)
+  if not player or not gamepassId then return false end
+  local s, res = pcall(_MPS.UserOwnsGamePassAsync, _MPS, player.UserId, gamepassId)
+    
+  if not s or not res then
+    return false
+  end
+
+  return true
+end
+
 function module:Initialise()
   Remotes.RedeemGamepass.OnServerInvoke = self.RedeemGamepass
   Remotes.GetUserGamepasses.OnServerInvoke = self.GetGamepasses
   Remotes.GetGamepassRedemptionStatus.OnServerInvoke = self.GetGamepassRedemptionStatus
+  Remotes.GetGamepassOwnershipStatus.OnServerInvoke = self.GetGamepassOwnershipStatus
 end
 
 return module

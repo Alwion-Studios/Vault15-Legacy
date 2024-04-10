@@ -77,6 +77,9 @@
                 "RedeemGamepass": {
                     "$className": "RemoteFunction"
                 },
+                "GetGamepassOwnershipStatus": {
+                    "$className": "RemoteFunction"
+                },
                 "GetGamepassRedemptionStatus": {
                     "$className": "RemoteFunction"
                 },

@@ -44,7 +44,7 @@ local Items = {
 
 	["GamepassAutomaticRifle"] = {
 		Name = "Automatic Rifle (Gamepass)",
-		Value = 200,
+		GamepassId = 780738825,
 		Type = "Primary"
 	},
 	
@@ -58,6 +58,24 @@ local Items = {
 		Name = "10mm Pistol (Gamepass)",
 		Type = "Secondary",
 		GamepassId = 755960403
+	},
+
+	["GamepassLaserRifle"] = {
+		Name = "Laser Rifle (Gamepass)",
+		Type = "Primary",
+		GamepassId = 780313225
+	},
+
+	["GamepassLaserPistol"] = {
+		Name = "Laser Pistol (Gamepass)",
+		Type = "Secondary",
+		GamepassId = 780293229
+	},
+
+	["GamepassPlasmaRifle"] = {
+		Name = "Plasma Rifle (Gamepass)",
+		Type = "Primary",
+		GamepassId = 780319168
 	},
 
 	Minigun = {

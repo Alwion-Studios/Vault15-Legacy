@@ -36,7 +36,7 @@ local module = {
   ServerName = "Vault 15: Legacy",
   Password = "123456789.",
   -- Version Control
-  branch = "tb",
+  branch = "rb",
   build = game.PlaceVersion,
   main = 0,
   milestone = 9,
