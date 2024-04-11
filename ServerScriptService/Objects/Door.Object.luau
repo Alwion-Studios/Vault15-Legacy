@@ -31,7 +31,7 @@ local Door = {
     PromptInstance = nil;
     Sound = nil;
     TimeToComplete = 1;
-    TimeToWait = 5;
+    TimeToWait = 3;
     IsLocked = false;
     RankId = false;
     GroupId = false;
@@ -82,8 +82,27 @@ function Door:Open()
             self.Positions["Open"] = {
                 ["Left"] = LeftCalculation;
             };
+        elseif self.Category == "VaultBorderDoor2" then
+            local Store = require(stores:WaitForChild(`{self.Category}.Store`))
+
+            local DownCalculation = (CFrame.new(self.Instance.PrimaryPart.Position.X, self.Instance.PrimaryPart.Position.Y-Store["Positions"]["Down"], self.Instance.PrimaryPart.Position.Z) 
+            * CFrame.Angles(math.rad(self.Instance.PrimaryPart.Orientation.X), math.rad(self.Instance.PrimaryPart.Orientation.Y), math.rad(self.Instance.PrimaryPart.Orientation.Z)))
+
+            self.Positions["Open"] = {
+                ["Down"] = DownCalculation;
+            };
         end
         --DoorService.Doors[self.Instance.Name] = self
+    end
+
+    -- Turn off cancollide
+    for _, instance: Instance in pairs(self.Instance:GetDescendants()) do 
+        if not instance:IsA("Part") or not instance:IsA("Union") or not instance:IsA("UnionOperation") then continue end
+        if instance.Parent.Name == "Sign" then continue end
+
+        instance.CanCollide = false
+        instance.CanTouch = false
+        instance.CanQuery = false
     end
 
     self.IsOpen = true
@@ -114,12 +133,29 @@ function Door:Close()
             self.Positions["Closed"] = {
                 ["Left"] = LeftCalculation;
             };
+        elseif self.Category == "VaultBorderDoor2" then
+            local UpCalculation = (CFrame.new(self.Instance.PrimaryPart.Position.X, self.Instance.PrimaryPart.Position.Y, self.Instance.PrimaryPart.Position.Z) 
+            * CFrame.Angles(math.rad(self.Instance.PrimaryPart.Orientation.X), math.rad(self.Instance.PrimaryPart.Orientation.Y), math.rad(self.Instance.PrimaryPart.Orientation.Z)))
+
+            self.Positions["Closed"] = {
+                ["Down"] = UpCalculation;
+            };
         end
         --DoorService.Doors[self.Instance.Name] = self
     end
 
+    -- Turn on cancollide
+    for _, instance: Instance in pairs(self.Instance:GetDescendants()) do 
+        if not instance:IsA("Part") or not instance:IsA("Union") or not instance:IsA("UnionOperation") then continue end
+        if instance.Parent.Name == "Sign" then continue end
+
+        instance.CanCollide = false
+        instance.CanTouch = false
+        instance.CanQuery = false
+    end
+
     self.IsOpen = false
-    Remotes.DoorTrigger:FireAllClients(self.Instance, self.Positions["Closed"])
+    Remotes.DoorTrigger:FireAllClients(self.Instance, self.Positions["Closed"], true)
     return true
 end
 

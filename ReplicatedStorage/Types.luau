@@ -1,3 +1,5 @@
+--!nonstrict
+
 --[[
      █████  ██      ██     ██ ██  ██████  ███    ██ 
     ██   ██ ██      ██     ██ ██ ██    ██ ████   ██ 
@@ -10,19 +12,36 @@
                         ©️ 2024
 ]]
 
--- ROBLOX API
-local ServerStorage = game:GetService("ServerStorage")
+-- Types
+export type dropDownOption = {
+    name: string,
+    description: string,
+    callback: () -> (),
+}
 
--- Imports
-local aDS = require(ServerStorage:WaitForChild("aDS").Objects:WaitForChild("Schema.Object"))
+export type Window = {
+    title: string,
+    UI: Frame,
+}
 
-local UserInfo = aDS.Create("Profile", {
-  Caps = 15,
-  Bullet = 0,
-  PlasmaCell = 0,
-  FusionCell = 0,
-  CodesRedeemed = {},
-  LastCollect = 0,
-  LastStreak = 0,
-}, {})
-return UserInfo
+export type DropDown = {
+    TriggerInstance: Instance,
+    UI: Frame,
+}
+
+export type UICreationOptions = {
+    title: string
+}
+
+export type frame = {
+    Pos: {
+        InFocus: UDim2,
+        Away: UDim2
+    },
+    UI: Frame,
+    Open: boolean,
+    CloseBtn: TextButton,
+    ClearScrollingFrame: ScrollingFrame
+}
+
+return nil

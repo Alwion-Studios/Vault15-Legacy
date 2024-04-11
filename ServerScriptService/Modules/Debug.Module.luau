@@ -31,6 +31,8 @@ local module = {
     Toggles = {
         ["DisableUsernameChecks"] = false,
         ["DisableDoorPermissions"] = false,
+        ["DisableTeamGroupCheck"] = false,
+        ["DisableTeamRankCheck"] = false,
     }
 }
 module.__index = module
@@ -67,7 +69,7 @@ function module:Initialise()
     local debugRemotes = remotes:WaitForChild("DebugRemotes")
 
     -- Create DisableUsernameChecks Remote
-    for name, option in self.Toggles do 
+    for name, option in self.Toggles do
         local Event = Instance.new("RemoteEvent")
         Event.Name = name
         Event.Parent = debugRemotes

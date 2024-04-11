@@ -53,17 +53,38 @@
                 "RequestDoorDetails": {
                     "$className": "RemoteFunction"
                 },
+                "GetVersionString": {
+                    "$className": "RemoteFunction"
+                },
                 "AttemptPurchase": {
                     "$className": "RemoteFunction"
                 },
-                "ShopGUIOpen": {
+                "ShopGUI": {
                     "$className": "BindableEvent"
+                },
+                "RequestPurchase": {
+                    "$className": "RemoteFunction"
                 },
                 "LightingInitialised": {
                     "$className": "BindableEvent"
                 },
                 "NotifyUser": {
                     "$className": "RemoteEvent"
+                },
+                "GetUserGamepasses": {
+                    "$className": "RemoteFunction"
+                },
+                "RedeemGamepass": {
+                    "$className": "RemoteFunction"
+                },
+                "GetGamepassOwnershipStatus": {
+                    "$className": "RemoteFunction"
+                },
+                "GetGamepassRedemptionStatus": {
+                    "$className": "RemoteFunction"
+                },
+                "MouseClickEvent": {
+                    "$className": "BindableEvent"
                 }
             },
 
@@ -112,6 +133,12 @@
               "$path": "StarterPlayer/StarterPlayerScripts"
             },
             "$ignoreUnknownInstances": true
+        },
+
+        "Lighting": {
+            "$className": "Lighting",
+            "$ignoreUnknownInstances": true,
+            "$path": "Lighting"
         }
     }
 }

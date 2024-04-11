@@ -33,14 +33,14 @@ local ServerIndexMap = MSS:GetSortedMap("ServerIndex")
 
 -- Module
 local module = {
-  ServerName = "Vault 15 Legacy (Test Server)",
+  ServerName = "Vault 15: Legacy",
   Password = "123456789.",
   -- Version Control
-  branch = "mb",
+  branch = "rb",
   build = game.PlaceVersion,
   main = 0,
-  milestone = 8,
-  patch = 1,
+  milestone = 9,
+  patch = 0,
 }
 module.__index = module
 
@@ -101,6 +101,10 @@ function module:Initialise()
       coroutine.close(updateCoroutine)
         self:Close()
     end)
+
+    remotes.GetVersionString.OnServerInvoke = function()
+      return self.version
+    end
 
     resolve(true)
   end)

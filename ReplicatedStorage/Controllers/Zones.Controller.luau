@@ -1,3 +1,5 @@
+--!nonstrict
+
 --[[
      █████  ██      ██     ██ ██  ██████  ███    ██ 
     ██   ██ ██      ██     ██ ██ ██    ██ ████   ██ 
@@ -10,19 +12,23 @@
                         ©️ 2024
 ]]
 
--- ROBLOX API
-local ServerStorage = game:GetService("ServerStorage")
+--Imports
+local _CS = game:GetService("CollectionService")
 
--- Imports
-local aDS = require(ServerStorage:WaitForChild("aDS").Objects:WaitForChild("Schema.Object"))
+-- Object
+local zoneObj = require(script.Parent.Parent.Objects.Zone)
 
-local UserInfo = aDS.Create("Profile", {
-  Caps = 15,
-  Bullet = 0,
-  PlasmaCell = 0,
-  FusionCell = 0,
-  CodesRedeemed = {},
-  LastCollect = 0,
-  LastStreak = 0,
-}, {})
-return UserInfo
+local module = {
+    zones = {}
+}
+
+function module:Initialise()
+    task.spawn(function()
+        for _, zone in _CS:GetTagged("Zone") do
+            print(`[ZNS-CLIENT] Adding {zone.Name}`)
+            self.zones[zone.Name] = zoneObj.New(zone)
+        end
+    end)
+end
+
+return module

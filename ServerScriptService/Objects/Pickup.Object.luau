@@ -37,6 +37,20 @@ function Pickup:ShowPickup()
     self.PromptInstance.Enabled = true
     self.Debounce = false
 
+    if self.Instance.Name == "Bullet" then 
+        for _, partToHide in pairs(self.Instance:WaitForChild("Parts"):GetChildren()) do
+            partToHide.Transparency = 0
+        end
+    end
+
+    if self.Light then 
+        self.Light.Enabled = true
+    end
+
+    if self.Particles then 
+        self.Particles.Enabled = true
+    end
+
     if self.waitCoroutine then
         coroutine.yield(self.waitCoroutine)
         coroutine.close(self.waitCoroutine)
@@ -45,6 +59,13 @@ end
 
 function Pickup:HidePickup()
     self.Instance:WaitForChild("Main").Transparency = 1
+
+    if self.Instance.Name == "Bullet" then 
+        for _, partToHide in pairs(self.Instance:WaitForChild("Parts"):GetChildren()) do 
+            partToHide.Transparency = 1
+        end
+    end
+
     self.PromptInstance.Enabled = false
 end
 
@@ -53,34 +74,66 @@ function Pickup:HandleTrigger(player: Player)
 
     --Tells the System to enable the "IsOpening" debounce, disabling pickup for others
     self.Debounce = true
-    self:HidePickup()
 
     -- Get the Player's Session
-    local _, session = aDS:GetSession(player.UserId, "UserData"):await()
+    local _, session = aDS:GetSession(player.UserId, "Profile"):await()
+
+    if not session then
+        return false
+    end
+
+    self:HidePickup()
     local status, _ = session:SetKey({}, self.Category, (session["Structure"][self.Category] + self.Value)):await()
 
     if status then print(`[PS] {player.Name} has picked up {self.Category} with a value of {self.Value}!`) end
+    
+    if self.Light then 
+        self.Light.Enabled = false
+    end
+
+    if self.Particles then 
+        self.Particles.Enabled = false
+    end
 
     self.waitCoroutine = coroutine.create(function()
-        task.wait(30)
+        task.wait(self.TimeToWait)
         self:ShowPickup()
     end)
     coroutine.resume(self.waitCoroutine)
 end
 
-function Pickup.New(instance, opt)
+function Pickup.New(instance: Instance, opt: table)
     if not instance or not opt then return false end
 
     local self = setmetatable({}, Pickup)
+
+    if opt.Category == "Nuka-Cola Quantum Cap" then 
+        self.Light = instance:WaitForChild("Main").PointLight
+        self.Particles = instance:WaitForChild("Main").ParticleEmitter
+    end
+
+    if opt.Category == "Nuka-Cola Quantum Cap" or opt.Category == "Nuka-Cola Grape Cap" or opt.Category == "Nuka-Cola Cap" then 
+        opt.Category = "Caps"
+    end
+
+    self.TimeToWait = 60
+    if instance:FindFirstChild("TimeTillRespawn") then 
+        self.TimeToWait = instance:WaitForChild("TimeTillRespawn").Value
+    end
 
     self.Value = opt.Value
     self.Category = opt.Category
     self.Instance = instance
 
     self.PromptInstance = RS:WaitForChild("Storage"):WaitForChild("PickupPrompt"):Clone()
-    self.PromptInstance.Parent = self.Instance:WaitForChild("Main")
+    self.PromptInstance.Parent = self.Instance
     self.PromptInstance.ActionText = `Pickup`
-    self.PromptInstance.ObjectText = `({self.Value}) {self.Category}`
+
+    if self.Value > 1 then 
+        self.PromptInstance.ObjectText = `{self.Value} {instance.Name}s`
+    else
+        self.PromptInstance.ObjectText = `{instance.Name}`
+    end
 
     self.PromptInstance.Triggered:Connect(function(player)
         self.PendingTrigger = pcall(self:HandleTrigger(player), self)

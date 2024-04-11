@@ -31,13 +31,15 @@ function module:OnJoin(player: Player)
   print(`[aDS] Creating a session for {player.Name}`)
 
   -- Get the Default Schema for Players
-  local _, schema = aDS:GetSchema("UserData"):await()
-  
+  local _, schema = aDS:GetSchema("Profile"):await()
+  local _, bountySchema = aDS:GetSchema("Bounty"):await()
+
   -- Create a Session for the User
   local status, session = aDS:CreateSession(player.UserId, schema):await()
+  local bountyStatus, bountySession = aDS:CreateSession(player.UserId, bountySchema):await()
 
   -- Kick the player if datastore initialisation is unsuccessful
-  if not status or not session then
+  if not status or not bountyStatus or not session or not bountySession then
     player:Kick(`[aDS] Failed to initialise a datastore session.`)
   end
 
@@ -45,6 +47,10 @@ function module:OnJoin(player: Player)
   local newFolder = Instance.new("Folder")
   newFolder.Name = "SaveFile"
   newFolder.Parent = player
+
+  if not typeof(session) == "table" or not session["Structure"] then 
+    player:Kick(`[aDS] Failed to initialise a datastore session.`)
+  end
 
   for name, value in session["Structure"] do 
       if typeof(value) == "table" then continue end
@@ -55,6 +61,12 @@ function module:OnJoin(player: Player)
       newValue.Value = value
       newValue.Parent = newFolder
   end
+
+  -- Create Bounty Value
+  local newValue = Instance.new("NumberValue")
+  newValue.Name = "Bounty"
+  newValue.Value = bountySession["Value"]
+  newValue.Parent = newFolder
 end
 
 function module:HandleKeyChange(player: Player, key, value)

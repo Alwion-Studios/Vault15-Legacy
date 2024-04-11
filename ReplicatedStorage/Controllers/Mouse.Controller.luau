@@ -1,3 +1,5 @@
+--!nonstrict
+
 --[[
      █████  ██      ██     ██ ██  ██████  ███    ██ 
     ██   ██ ██      ██     ██ ██ ██    ██ ████   ██ 
@@ -10,19 +12,31 @@
                         ©️ 2024
 ]]
 
--- ROBLOX API
-local ServerStorage = game:GetService("ServerStorage")
+--Imports
+local _RS = game:GetService("ReplicatedStorage")
 
--- Imports
-local aDS = require(ServerStorage:WaitForChild("aDS").Objects:WaitForChild("Schema.Object"))
+-- Remotes
+local remotes = _RS.Remotes
 
-local UserInfo = aDS.Create("Profile", {
-  Caps = 15,
-  Bullet = 0,
-  PlasmaCell = 0,
-  FusionCell = 0,
-  CodesRedeemed = {},
-  LastCollect = 0,
-  LastStreak = 0,
-}, {})
-return UserInfo
+local module = {
+    mouse = game.Players.LocalPlayer:GetMouse();
+    ConnectedFunctions = {};
+    TotalFunctions = 0;
+}
+
+function module:Connect()
+    local id = self.TotalFunctions+1
+    self.ConnectedFunctions[id] = self.mouse.Button1Down:Connect(function() 
+        if not self.mouse.Target then return end
+        remotes.MouseClickEvent:Fire(id, self.mouse.Target)
+    end)
+    return id
+end
+
+function module:Disconnect(id: number)
+    if not self.ConnectedFunctions[id] then return false end
+    self.ConnectedFunctions[id]:Disconnect()
+    return true
+end
+
+return module
