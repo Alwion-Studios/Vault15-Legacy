@@ -86,7 +86,7 @@ function Pickup:HandleTrigger(player: Player)
     local status, _ = session:SetKey({}, self.Category, (session["Structure"][self.Category] + self.Value)):await()
 
     if status then print(`[PS] {player.Name} has picked up {self.Category} with a value of {self.Value}!`) end
-
+    
     if self.Light then 
         self.Light.Enabled = false
     end

@@ -107,6 +107,11 @@ function Core:Shutdown(): Promise
     return Promise.resolve(true)
 end
 
+PS.PlayerRemoving:Connect(function(player)
+    local _, session = Core:GetSession(player.UserId, "Profile"):await()
+    session:Save()
+end)
+
 game:BindToClose(function() 
     Core:Shutdown():await()
 end)

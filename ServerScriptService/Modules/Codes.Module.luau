@@ -79,7 +79,6 @@ function module.AttemptCode(player: Player, code: string)
 
     print(`[CS] Successfully gave {player.Name} their reward(s)!`)
     notifyRemote:FireClient(player, `Code Redemption`, `You've Redeemed {code}!`)
-    session:Save()
     return true
 end
 

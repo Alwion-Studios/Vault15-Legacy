@@ -204,7 +204,7 @@ function module:RefreshItemGui()
             if typeof(redemptionTime) == "number" and typeof(timeUntilReset) == "number" then 
                 self.timerCheck = false
                 task.spawn(function()
-                    self.UI.ItemDetails.TopBar.Price.Text = `Redeemable in... 30 seconds`
+                    self.UI.ItemDetails.TopBar.Price.Text = `Redeemable in... 60 seconds`
                     while wait(1) do
                         if self.timerCheck then break end
                         if (os.time()-redemptionTime) > timeUntilReset then

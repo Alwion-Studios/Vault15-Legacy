@@ -66,7 +66,6 @@ function module.AttemptDonation(player: Player, targetUsername: string, capsToDo
 
   if status and targetStatus then 
     print(`[DS] {player.Name} gave {targetUsername} {capsToDonate} caps!`)
-
     notifyRemote:FireClient(PS[targetUsername], "Donation", `{player.Name} has donated {capsToDonate} caps!`)
 
     return true
