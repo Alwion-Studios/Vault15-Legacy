@@ -28,6 +28,7 @@ local shops_module = require(script.Parent.Modules["Shops.Module"])
 local monetisation_module = require(script.Parent.Modules["Monetisation.Module"])
 local zones_module = require(script.Parent.Modules["Zones.Module"])
 local guns_module = require(script.Parent.Modules["Guns.Module"])
+local movement_engine = require(script.Parent.Modules["MES.Module"])
 
 local aDS = require(ServerStorage:WaitForChild("aDS"):WaitForChild("Core"))
 
@@ -47,6 +48,7 @@ shops_module:Initialise()
 monetisation_module:Initialise()
 zones_module:Initialise()
 guns_module:Initialise()
+movement_engine:Initialise()
 
 -- Handle aDS Schema Initialisation
 aDS.Initialise(script.Parent.Schemas)

@@ -15,7 +15,7 @@
 local RNS = game:GetService("RunService")
 
 --Imports
-local packages = game:GetService("ReplicatedStorage").Packages
+local remotes = game:GetService("ReplicatedStorage").Remotes
 
 local MovementEngine = {}
 
@@ -32,20 +32,24 @@ function MovementEngine.StartSprint(player: Player)
     -- Character
     local char = player.Character or player.CharacterAdded:Wait()
     local hum = char.Humanoid or char:WaitForChild("Humanoid")
-    hum.WalkSpeed = 128
+    hum.WalkSpeed = 32
 
     local conn
 
     conn = RNS.Stepped:Connect(function(time, deltaTime)
-        -- Handle Stamina
-        if player:GetAttribute("IsResting") or player:GetAttribute("Stamina") <= 0 then
-            conn:Disconnect()
-            return MovementEngine.StopSprint(player)
-        end
+        if hum.MoveDirection.X > 0 or hum.MoveDirection.X < 0 or hum.MoveDirection.Z > 0 or hum.MoveDirection.Z < 0 or hum.MoveDirection.Y > 0 or hum.MoveDirection.Y < 0 then
+            -- Handle Stamina
+            if player:GetAttribute("IsResting") or player:GetAttribute("Stamina") <= 0 then
+                conn:Disconnect()
+                return MovementEngine.StopSprint(player)
+            end
 
-        print(player:GetAttribute("Stamina"))
-        player:SetAttribute("Stamina", (player:GetAttribute("Stamina")-2))
-        print(player:GetAttribute("Stamina"))
+            print(player:GetAttribute("Stamina"))
+            player:SetAttribute("Stamina", (player:GetAttribute("Stamina")-2))
+            print(player:GetAttribute("Stamina"))
+        else
+            player:SetAttribute("Stamina", (player:GetAttribute("Stamina")+1))
+        end
     end)
 
     return true
@@ -75,7 +79,8 @@ function MovementEngine.StopSprint(player: Player)
 end
 
 function MovementEngine:Initialise()
-
+    remotes.StartSprinting.OnServerEvent:Connect(self.StartSprint)
+    remotes.StopSprinting.OnServerEvent:Connect(self.StopSprint)
 end
 
 return MovementEngine

@@ -16,6 +16,7 @@
 local _RS = game:GetService("ReplicatedStorage")
 local _PS = game:GetService("Players")
 local _CAS = game:GetService("ContextActionService")
+local _RNS = game:GetService("RunService")
 
 -- Types
 local types = require(_RS.Types)
@@ -179,6 +180,34 @@ function module:Initialise()
         self:CloseUI(menu)
     end
 
+    -- Stamina Box
+    task.spawn(function()
+        _RNS.RenderStepped:Connect(function()
+            local stamina = game.Players.LocalPlayer:GetAttribute("Stamina")
+
+            if stamina >= 100 then
+                if ui_controller.animationsEnabled and ui_controller.animationsEnabled == true then 
+                    tween(LeftBox.Stamina, 0.25, "Linear", "Out", 0, false, {["BackgroundTransparency"]=1})
+                else 
+                    LeftBox.Stamina.BackgroundTransparency = 1
+                end
+            else
+                if ui_controller.animationsEnabled and ui_controller.animationsEnabled == true then 
+                    tween(LeftBox.Stamina, 0.25, "Linear", "In", 0, false, {["BackgroundTransparency"]=0})
+                else 
+                    LeftBox.Stamina.BackgroundTransparency = 0
+
+                end
+            end
+
+            if ui_controller.animationsEnabled and ui_controller.animationsEnabled == true then
+                tween(LeftBox.Stamina, 0.1, "Sine", "Out", 0, false, {["Size"]=UDim2.new((stamina/100), 0, 0, 2.5)})
+            else
+                LeftBox.Stamina.Size = UDim2.new((stamina/100), 0, 0, 2.5)
+            end
+        end)
+    end)
+
     -- Box Code
     LeftBox.MouseMoved:Connect(function()
         if ui_controller.animationsEnabled and ui_controller.animationsEnabled == true then
@@ -187,9 +216,9 @@ function module:Initialise()
             LeftBox.Size = UDim2.new(0,180,0,120)
         end
 
-        LeftBox.Bullets.Visible = true
-        LeftBox.FusionCells.Visible = true
-        LeftBox.PlasmaCells.Visible = true
+        LeftBox.Items.Bullets.Visible = true
+        LeftBox.Items.FusionCells.Visible = true
+        LeftBox.Items.PlasmaCells.Visible = true
     end)
   
     LeftBox.MouseLeave:Connect(function()
@@ -199,30 +228,30 @@ function module:Initialise()
             LeftBox.Size = UDim2.new(0,180,0,58)
         end
 
-        LeftBox.Bullets.Visible = false
-        LeftBox.FusionCells.Visible = false
-        LeftBox.PlasmaCells.Visible = false
+        LeftBox.Items.Bullets.Visible = false
+        LeftBox.Items.FusionCells.Visible = false
+        LeftBox.Items.PlasmaCells.Visible = false
     end)
       
     -- Left Box Caps Rendering
-    LeftBox.Caps.Caps.Text = formatter(SaveFile:WaitForChild("Caps").Value)
+    LeftBox.Items.Caps.Caps.Text = formatter(SaveFile:WaitForChild("Caps").Value)
     SaveFile:WaitForChild("Caps").Changed:Connect(function(newVal)
-        LeftBox.Caps.Caps.Text = formatter(newVal)
+        LeftBox.Items.Caps.Caps.Text = formatter(newVal)
     end)
     
-    LeftBox.Bullets.Bullets.Text = formatter(SaveFile:WaitForChild("Bullet").Value)
+    LeftBox.Items.Bullets.Bullets.Text = formatter(SaveFile:WaitForChild("Bullet").Value)
     SaveFile:WaitForChild("Bullet").Changed:Connect(function(newVal)
-        LeftBox.Bullets.Bullets.Text = formatter(newVal)
+        LeftBox.Items.Bullets.Bullets.Text = formatter(newVal)
     end)
     
-    LeftBox.FusionCells.FusionCells.Text = formatter(SaveFile:WaitForChild("FusionCell").Value)
+    LeftBox.Items.FusionCells.FusionCells.Text = formatter(SaveFile:WaitForChild("FusionCell").Value)
     SaveFile:WaitForChild("FusionCell").Changed:Connect(function(newVal)
-        LeftBox.FusionCells.FusionCells.Text = formatter(newVal)
+        LeftBox.Items.FusionCells.FusionCells.Text = formatter(newVal)
     end)
     
-    LeftBox.PlasmaCells.PlasmaCells.Text = formatter(SaveFile:WaitForChild("PlasmaCell").Value)
+    LeftBox.Items.PlasmaCells.PlasmaCells.Text = formatter(SaveFile:WaitForChild("PlasmaCell").Value)
     SaveFile:WaitForChild("PlasmaCell").Changed:Connect(function(newVal)
-        LeftBox.PlasmaCells.PlasmaCells.Text = formatter(newVal)
+        LeftBox.Items.PlasmaCells.PlasmaCells.Text = formatter(newVal)
     end)
 end
 

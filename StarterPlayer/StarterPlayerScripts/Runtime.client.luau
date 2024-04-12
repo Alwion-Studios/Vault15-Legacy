@@ -26,6 +26,7 @@ local zone_controller = require(Controllers["Zones.Controller"])
 local shopGui_controller = require(Controllers["ShopGui.Controller"])
 local ui_controller = require(Controllers["UI.Controller"])
 local playerGui_controller = require(Controllers["PlayerGui.Controller"])
+local movement_engine = require(Controllers["MovementEngine.Controller"])
 
 -- Initialise Controllers
 shopGui_controller:Initialise()
@@ -37,3 +38,4 @@ rigAnimation_controller:Initialise()
 zone_controller:Initialise()
 notification_controller:Initialise()
 shop_controller:Initialise()
+movement_engine:Initialise()
