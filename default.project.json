@@ -85,6 +85,12 @@
                 },
                 "MouseClickEvent": {
                     "$className": "BindableEvent"
+                },
+                "StartSprinting": {
+                    "$className": "RemoteEvent"
+                },
+                "StopSprinting": {
+                    "$className": "RemoteEvent"
                 }
             },
 
