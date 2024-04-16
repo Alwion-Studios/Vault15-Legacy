@@ -105,7 +105,7 @@ function module.FireWeapon(player: Player, tool: tool, Pos)
 			HitPlayer = nil
 		end
 		
-		if not (HitPlayer == nil or HitPlayer == player) then
+		if not (HitPlayer == nil or HitPlayer == player or HitPlayer:GetAttribute("PVP") ~= true) then
             local HitHumanoid = HitCharacter:FindFirstChild("Humanoid")
             if HitHumanoid and HitHumanoid.Health > 0 then
                 Remotes.HitMarker:FireClient(player)

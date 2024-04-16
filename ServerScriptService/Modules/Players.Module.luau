@@ -41,6 +41,7 @@ players.__index = players
 function players.HandleJoin(player: Player)
   -- Make sure they're in the alwion studios group
 
+  player:SetAttribute("PVP", false)
   player:SetAttribute("Stamina", 100)
   if player:GetRankInGroup(15603595) < 2 or false then
     player:Kick("DEV-LOCK: You're not a developer or QA!")

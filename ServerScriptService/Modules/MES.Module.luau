@@ -48,7 +48,7 @@ function MovementEngine.StartSprint(player: Player)
             player:SetAttribute("Stamina", (player:GetAttribute("Stamina")-2))
             print(player:GetAttribute("Stamina"))
         else
-            player:SetAttribute("Stamina", (player:GetAttribute("Stamina")+1))
+            player:SetAttribute("Stamina", (player:GetAttribute("Stamina")+0.125))
         end
     end)
 
@@ -73,7 +73,7 @@ function MovementEngine.StopSprint(player: Player)
             
             return conn:Disconnect()
         end
-        player:SetAttribute("Stamina", (player:GetAttribute("Stamina")+1))
+        player:SetAttribute("Stamina", (player:GetAttribute("Stamina")+0.125))
         print(player:GetAttribute("Stamina"))
     end)
 end

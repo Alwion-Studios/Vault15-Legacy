@@ -22,6 +22,7 @@ local UserInfo = aDS.Create("Profile", {
   PlasmaCell = 0,
   FusionCell = 0,
   CodesRedeemed = {},
+  Inventory = {},
   LastCollect = 0,
   LastStreak = 0,
 }, {})

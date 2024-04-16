@@ -13,6 +13,7 @@
 ]]
 
 --Imports
+local PolicyService = game:GetService("PolicyService")
 local _RS = game:GetService("ReplicatedStorage")
 local _PS = game:GetService("Players")
 local _CAS = game:GetService("ContextActionService")
@@ -40,7 +41,8 @@ local SaveFile = _PS.LocalPlayer:WaitForChild("SaveFile")
 local GUI = PlayerGui:WaitForChild("ScreenGui")
 
 -- UI Frames
-local LeftBox = GUI:WaitForChild("LeftBox")
+local LeftBox: Frame = GUI:WaitForChild("LeftBox")
+local PVPAlertBox: Frame = GUI:WaitForChild("PVPAlert")
 
 -- Tween Function
 local tween = require(_RS.Functions.Tween)
@@ -206,6 +208,35 @@ function module:Initialise()
                 LeftBox.Stamina.Size = UDim2.new((stamina/100), 0, 0, 2.5)
             end
         end)
+    end)
+
+    --PVP Box Code
+    local opposites = {
+        [true]=false,
+        [false]=true
+    }
+
+    PVPAlertBox.Visible = opposites[_PS.LocalPlayer:GetAttribute("PVP")]
+    _PS.LocalPlayer:GetAttributeChangedSignal("PVP"):Connect(function()
+        PVPAlertBox.Visible = opposites[_PS.LocalPlayer:GetAttribute("PVP")]
+    end)
+
+    PVPAlertBox.MouseMoved:Connect(function()
+        if ui_controller.animationsEnabled and ui_controller.animationsEnabled == true then
+            tween(PVPAlertBox, 0.5, "Exponential", "Out", 0, false, {["Size"]=UDim2.new(0,180,0,120)})
+        else
+            PVPAlertBox.Size = UDim2.new(0,180,0,120)
+        end
+        PVPAlertBox.Items.Description.Visible = true
+    end)
+
+    PVPAlertBox.MouseLeave:Connect(function()
+        if ui_controller.animationsEnabled and ui_controller.animationsEnabled == true then
+            tween(PVPAlertBox, 0.5, "Exponential", "Out", 0, false, {["Size"]=UDim2.new(0,180,0,58)})
+        else
+            PVPAlertBox.Size = UDim2.new(0,180,0,58)
+        end
+        PVPAlertBox.Items.Description.Visible = false
     end)
 
     -- Box Code
