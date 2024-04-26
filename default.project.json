@@ -6,8 +6,35 @@
         "ReplicatedStorage": {
             "$className": "ReplicatedStorage",
             "$ignoreUnknownInstances": true,
-            "$path": "ReplicatedStorage",
-            
+
+            "Controllers": {
+                "$className": "Folder",
+                "$path": "ReplicatedStorage/Controllers"
+            },
+
+            "Formatting": {
+                "$className": "Folder",
+                "$path": "ReplicatedStorage/Formatting"
+            },
+
+            "Functions": {
+                "$className": "Folder",
+                "$path": "ReplicatedStorage/Functions"
+            },
+
+            "Objects": {
+                "$className": "Folder",
+                "$path": "ReplicatedStorage/Objects"
+            },
+
+            "ItemData": {
+                "$path": "ReplicatedStorage/ItemData.luau"
+            },
+
+            "Types": {
+                "$path": "ReplicatedStorage/Types.luau"
+            },
+
             "Remotes": {
                 "$className": "Folder",
 

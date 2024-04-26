@@ -70,7 +70,7 @@ function Pickup:HidePickup()
 end
 
 function Pickup:HandleTrigger(player: Player)
-    if self.Debounce then return false end
+    if not self.Instance or self.Instance.Parent ~= self.Parent or self.Debounce then return false end
 
     --Tells the System to enable the "IsOpening" debounce, disabling pickup for others
     self.Debounce = true
@@ -124,6 +124,7 @@ function Pickup.New(instance: Instance, opt: table)
     self.Value = opt.Value
     self.Category = opt.Category
     self.Instance = instance
+    self.Parent = instance.Parent
 
     self.PromptInstance = RS:WaitForChild("Storage"):WaitForChild("PickupPrompt"):Clone()
     self.PromptInstance.Parent = self.Instance

@@ -20,16 +20,16 @@ local _UIS = game:GetService("UserInputService")
 local _MS = game:GetService("MarketplaceService")
 
 -- Object
-local shopObject = require(script.Parent.Parent.Objects["Shop.Object"])
+local shopObject = require(_RS.Objects["Shop.Object"])
 
 -- Gui Module
-local guiModule = require(script.Parent["UI.Controller"])
+local guiModule = require(_RS.Controllers["UI.Controller"])
 
 -- Camera Module
-local cameraModule = require(script.Parent["Camera.Controller"])
+local cameraModule = require(_RS.Controllers["Camera.Controller"])
 
 -- Mouse Module
-local mouseModule = require(script.Parent["Mouse.Controller"])
+local mouseModule = require(_RS.Controllers["Mouse.Controller"])
 
 -- Remotes
 local remotes = _RS.Remotes
@@ -45,7 +45,7 @@ local guiTemplates = _RS.GuiTemplates
 local formatter = require(_RS.Formatting.Number)
 
 -- Size Calculation Function
-local sizeCalculations = require(script.Parent.Parent.Functions.sizeCalculations)
+local sizeCalculations = require(_RS.Functions.sizeCalculations)
 
 -- Tween Function
 local function Tween(Object, Time, Style, Direction, Repeat, Customization)
