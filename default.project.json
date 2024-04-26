@@ -65,7 +65,7 @@
                 "SignTrigger": {
                     "$className": "RemoteEvent"
                 },
-                "FireWeapon": {
+                "ShotImpactEvent": {
                     "$className": "RemoteEvent"
                 },
                 "ReloadWeapon": {
@@ -168,6 +168,11 @@
                 "NPCs": {
                     "$className": "Actor",
                     "$path": "Threads/NPCs"
+                },
+
+                "Guns": {
+                    "$className": "Actor",
+                    "$path": "Threads/Guns"
                 }
             },
             "$ignoreUnknownInstances": true

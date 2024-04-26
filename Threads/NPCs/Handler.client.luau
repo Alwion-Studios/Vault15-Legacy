@@ -21,6 +21,7 @@ local _GS = game:GetService("TweenService")
 
 --Tween Function
 local Tween = function (Object, Time, Style, Direction, RepeatCount, Repeat, Customization)
+	task.synchronize()
 	_GS:Create(Object, TweenInfo.new(Time, Enum.EasingStyle[Style], Enum.EasingDirection[Direction], RepeatCount, Repeat, 0), Customization):Play()
 end
 
@@ -81,7 +82,10 @@ local function ConfigureHeadTracking()
 	-- Configure Head Tracking
 	_RNS.RenderStepped:ConnectParallel(function(deltaTime)
 		for _, rig in pairs(_CS:GetTagged("AnimatedRig")) do
-			local neck = rig.Head.Neck
+			task.synchronize()
+			if not rig then continue end
+			local neck = rig:WaitForChild("Head").Neck
+			task.desynchronize()
 			local xOffSet = neck.C0.X
 			local yOffSet = neck.C0.Y
 			local zOffSet = neck.C0.Z
@@ -108,10 +112,9 @@ local function ConfigureHeadTracking()
 					* CFrame.Angles(0, -angle, 0)
 					* CFrame.Angles(-upAngle, 0, 0)
 				)]]
-                task.synchronize()
 				Tween(neck, 0.15, "Linear", "In", 0, false, {C0 = (CFrame.new(xOffSet, yOffSet, zOffSet)*CFrame.Angles(0, -angle, 0) * CFrame.Angles(-upAngle, 0, 0))})
+				task.desynchronize()
 			else
-                task.synchronize()
 				Tween(
 					neck,
 					0.5,
@@ -121,6 +124,7 @@ local function ConfigureHeadTracking()
 					false,
 					{ C0 = (CFrame.new(xOffSet, yOffSet, zOffSet) * CFrame.Angles(0, 0, 0) * CFrame.Angles(0, 0, 0)) }
 				)
+				task.desynchronize()
 			end
 		end
 	end)

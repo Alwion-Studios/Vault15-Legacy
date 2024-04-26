@@ -27,7 +27,7 @@ local pickup_module = require(script.Parent.Modules["Pickup.Module"])
 local shops_module = require(script.Parent.Modules["Shops.Module"])
 local monetisation_module = require(script.Parent.Modules["Monetisation.Module"])
 local zones_module = require(script.Parent.Modules["Zones.Module"])
-local guns_module = require(script.Parent.Modules["Guns.Module"])
+local guns_module = require(script.Parent.Modules["NewGuns.Module"])
 local movement_engine = require(script.Parent.Modules["MES.Module"])
 
 local aDS = require(ServerStorage:WaitForChild("aDS"):WaitForChild("Core"))

@@ -44,7 +44,8 @@ function players.HandleJoin(player: Player)
 
   player:SetAttribute("PVP", false)
   player:SetAttribute("Stamina", 100)
-  if player:GetRankInGroup(15603595) < 2 or false then
+
+  if (not game:GetService("RunService"):IsStudio()) and (player:GetRankInGroup(15603595) < 2 or false) then
     player:Kick("DEV-LOCK: You're not a developer or QA!")
   end
 
