@@ -14,6 +14,7 @@
 local RS = game:GetService("ReplicatedStorage")
 local TS = game:GetService("Teams")
 local BS = game:GetService("BadgeService")
+local _CS = game:GetService("CollectionService")
 
 -- Remotes
 local remotes = RS:WaitForChild("Remotes")
@@ -64,8 +65,11 @@ function players.HandleJoin(player: Player)
   -- Disable CanCollide, CanQuery and CanTouch for all accessories
   local character = player.Character or player.CharacterAdded:Wait()
   
-  for _, part: Accessory in pairs(character:GetChildren()) do
+  for _, part: Accessory in pairs(character:GetDescendants()) do
     if not part:IsA("Accessory") then continue end
+    if part:IsA("ParticleEmitter") then 
+      _CS:AddTag(part, "ParticleEmitter")
+    end
     part = part:WaitForChild("Handle")
     part.CanCollide = false
     part.CanTouch = false

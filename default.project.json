@@ -163,7 +163,12 @@
             "StarterPlayerScripts": {
               "$className": "StarterPlayerScripts",
               "$ignoreUnknownInstances": true,
-              "$path": "StarterPlayer/StarterPlayerScripts"
+              "$path": "StarterPlayer/StarterPlayerScripts",
+
+                "NPCs": {
+                    "$className": "Actor",
+                    "$path": "Threads/NPCs"
+                }
             },
             "$ignoreUnknownInstances": true
         },
