@@ -29,33 +29,40 @@ module.__index = module
 
 function module.ValidateLocation(player: Player, victim: Player, victimPart: Part, gunConfig: table)
     local playerChar = player.Character or player.CharacterAdded:Wait()
-    local victimChar = victim or victim.CharacterAdded:Wait()
+    local victimChar = victim
     local range = gunConfig.Range or 30
 
     if (playerChar.HumanoidRootPart.Position - victimChar.HumanoidRootPart.Position).magnitude > range then return false end
     return true
 end
 
-function module.ProcessHit(player: Player, rayCastResult: RaycastResult, position: Vector3, gun: Instance)
-    if not player or not (player.Character) or not gun or gun.Parent ~= player.Character or not gun:FindFirstChild("GunSettings") then return false end
+function module.ProcessHit(player: Player, victim: Model, victimPart: Part, position: Vector3, gun: Instance)
+    if not player or not (player.Character) or not gun or gun.Parent ~= player.Character or not gun:FindFirstChild("GunSettings") then print(false) return false end
 
-    Remotes.ShotFired:FireAllClients(player, require(gun.GunSettings).Barrel.Position, position)
+    Remotes.ShotFiredEvent:FireAllClients(player, gun, require(gun.GunSettings).Barrel.Position, position)
 
-    if not rayCastResult then return false end
-
-    local victim = rayCastResult.Instance.Parent
-    local victimPart = rayCastResult.Instance
-
-    if not victim and not victimPart then return false end
+    print(victim)
+    if not victim or not victimPart or not victim:FindFirstChild("HumanoidRootPart") then return false end
     if not module.ValidateLocation(player, victim, victimPart, require(gun.GunSettings)) then return false end
     
+    local hum: Humanoid = victim:WaitForChild("Humanoid")
     local Settings = require(gun.GunSettings)
+
+    if (victimPart.Name == "LeftUpperArm" or victimPart.Name == "LeftLowerArm" or victimPart.Name == "LeftHand") or (victimPart.Name == "RightUpperArm" or victimPart.Name == "RightLowerArm" or victimPart.Name == "RightHand") or (victimPart.Name == "RightArm" or victimPart.Name == "LeftArm") then 
+        hum:TakeDamage(Settings.BulletDamage * Settings["Modifiers"]["Arms"])
+    elseif (victimPart.Name == "LeftUpperLeg" or victimPart.Name == "LeftLowerLeg" or victimPart.Name == "LeftFoot") or (victimPart.Name == "RightUpperLeg" or victimPart.Name == "RightLowerLeg" or victimPart.Name == "RightFoot") or (victimPart.Name == "RightLeg" or victimPart.Name == "LeftLeg") then
+        hum:TakeDamage(Settings.BulletDamage * Settings["Modifiers"]["Legs"])
+    elseif victimPart.Name == "HumanoidRootPart" or (victimPart.Name == "UpperTorso" or victimPart.Name == "LowerTorso") or victimPart.Name == "Torso" then
+        hum:TakeDamage(Settings.BulletDamage * Settings["Modifiers"]["Torso"])
+    elseif victimPart.Name == "Head" then
+        hum:TakeDamage(Settings.BulletDamage * Settings["Modifiers"]["Head"])
+    end
 
     print(true)
 end
 
 function module:Initialise()
-    Remotes.ShotImpactEvent.OnServerEvent:Connect(self.ProcessHit)
+    Remotes.ShotFiredEvent.OnServerEvent:Connect(self.ProcessHit)
 end
 
 return module

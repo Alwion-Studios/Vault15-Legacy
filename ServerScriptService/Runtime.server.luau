@@ -14,6 +14,7 @@
 local PS = game:GetService("Players")
 local RS = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
+local _CS = game:GetService("CollectionService")
 
 -- Imports
 local debug_module = require(script.Parent.Modules["Debug.Module"])

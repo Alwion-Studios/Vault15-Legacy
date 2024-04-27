@@ -65,13 +65,13 @@
                 "SignTrigger": {
                     "$className": "RemoteEvent"
                 },
-                "ShotImpactEvent": {
-                    "$className": "RemoteEvent"
-                },
                 "ReloadWeapon": {
                     "$className": "RemoteEvent"
                 },
-                "ShotFired": {
+                "ShotFiredEvent": {
+                    "$className": "RemoteEvent"
+                },
+                "ClientFiredEvent": {
                     "$className": "RemoteEvent"
                 },
                 "HitMarker": {

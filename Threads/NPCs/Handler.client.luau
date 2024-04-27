@@ -83,8 +83,8 @@ local function ConfigureHeadTracking()
 	_RNS.RenderStepped:ConnectParallel(function(deltaTime)
 		for _, rig in pairs(_CS:GetTagged("AnimatedRig")) do
 			task.synchronize()
-			if not rig then continue end
-			local neck = rig:WaitForChild("Head").Neck
+			if not rig or not rig:FindFirstChild("Head") then continue end
+			local neck = rig:FindFirstChild("Head").Neck
 			task.desynchronize()
 			local xOffSet = neck.C0.X
 			local yOffSet = neck.C0.Y

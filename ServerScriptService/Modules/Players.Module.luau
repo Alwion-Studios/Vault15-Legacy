@@ -64,18 +64,18 @@ function players.HandleJoin(player: Player)
   aDS_Handler:OnJoin(player)
 
   -- Disable CanCollide, CanQuery and CanTouch for all accessories
-  local character = player.Character or player.CharacterAdded:Wait()
-  
-  for _, part: Accessory in pairs(character:GetDescendants()) do
-    if not part:IsA("Accessory") then continue end
-    if part:IsA("ParticleEmitter") then 
-      _CS:AddTag(part, "ParticleEmitter")
+  player.CharacterAdded:Connect(function(character)
+    for _, part: Accessory in pairs(character:GetDescendants()) do
+      if not part:IsA("Accessory") then continue end
+      if part:IsA("ParticleEmitter") then 
+        _CS:AddTag(part, "ParticleEmitter")
+      end
+      part = part:WaitForChild("Handle")
+      part.CanCollide = false
+      part.CanTouch = false
+      part.CanQuery = false
     end
-    part = part:WaitForChild("Handle")
-    part.CanCollide = false
-    part.CanTouch = false
-    part.CanQuery = false
-  end
+  end)
 end
 
 function players:Initialise()
@@ -97,14 +97,6 @@ function players:Initialise()
     print(`{player.Name} has joined {teamName}`)
     player.Team = team
     player:LoadCharacter()
-
-    for _, part: Accessory in pairs(player.Character:GetChildren()) do
-      if not part:IsA("Accessory") then continue end
-      part = part:WaitForChild("Handle")
-      part.CanCollide = false
-      part.CanTouch = false
-      part.CanQuery = false
-    end
     
     return true
   end
