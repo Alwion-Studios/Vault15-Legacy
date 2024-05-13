@@ -153,6 +153,11 @@
             "$path": "ServerStorage"
         },
 
+        "StarterGui": {
+            "$ignoreUnknownInstances": true,
+            "$path": "StarterGui"
+        },
+
         "StarterPlayer": {
             "$className": "StarterPlayer",
             "StarterCharacterScripts": {
@@ -163,17 +168,7 @@
             "StarterPlayerScripts": {
               "$className": "StarterPlayerScripts",
               "$ignoreUnknownInstances": true,
-              "$path": "StarterPlayer/StarterPlayerScripts",
-
-                "NPCs": {
-                    "$className": "Actor",
-                    "$path": "Threads/NPCs"
-                },
-
-                "Guns": {
-                    "$className": "Actor",
-                    "$path": "Threads/Guns"
-                }
+              "$path": "StarterPlayer/StarterPlayerScripts"
             },
             "$ignoreUnknownInstances": true
         },

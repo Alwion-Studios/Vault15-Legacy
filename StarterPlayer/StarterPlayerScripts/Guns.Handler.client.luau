@@ -16,6 +16,7 @@ local _PS = game:GetService("Players")
 local _RS = game:GetService("ReplicatedStorage")
 local _RNS = game:GetService("RunService")
 local _CNS = game:GetService("ContextActionService")
+local _CS = game:GetService("CollectionService")
 
 -- Player
 local Player: Player = _PS.LocalPlayer
@@ -49,67 +50,30 @@ function GetTargetPosition()
 	return Mouse.Hit.Position
 end
 
-local function GetTool()
-    if not Player.Character then return nil end
-    local tool = Player.Character:FindFirstChildOfClass("Tool")
-    if not tool or not tool:FindFirstChild("GunSettings") then return nil end
-
-    return tool
-end
-
 local function CreateBullet(gun: Tool)
     if not gun then return false end
-    task.synchronize()
-    -- Bullet Creation
-    local bullet = Instance.new("Part")
-    bullet.Parent = workspace
-    bullet.CanCollide = false
-    bullet.Shape = Enum.PartType.Ball
-    bullet.Transparency = 1
-    bullet.Size = Vector3.new(0.5,0.5,0.5)
+end
 
-    -- Tracer Creation
-    local att1: Attachment = gun.Handle.Attch1
-    local att2: Attachment = gun.Handle.Attch2
-    local trail: Trail = gun.Handle.Trail
+local function CreateProjectile(gun: Tool)
+    if not gun then return false end
+end
+
+local function CreateMuzzleFlash(gun: Tool)
+    if not gun or not gun.Barrel or not gun.Barrel.MuzzleFlash then return false end
     
-    -- Clone the Attachment and Beam
-    local attch1Clone: Attachment = att1:Clone()
-    local attch2Clone: Attachment = att2:Clone()
-    local trailClone: Beam = trail:Clone()
+    gun.Barrel.MuzzleFlash.Enabled = true
+    task.wait(0.1)
+    gun.Barrel.MuzzleFlash.Enabled = false
+    
+end
 
-    attch1Clone.Parent = bullet
-    attch1Clone.Position = Vector3.new(0,.05,0)
-    attch2Clone.Parent = bullet
-    attch2Clone.Position = Vector3.new(0,-.05,0)
+local function PlaySound(gun: Tool, status: string)
+    if not gun or not status then return false end
+    if not gun.Handle[`{status}Sound`] then return false end
 
-    trailClone.Parent = bullet
-    trailClone.Attachment0 = attch1Clone
-    trailClone.Attachment1 = attch2Clone
-    trailClone.Enabled = true
-
-    trailClone.Transparency = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0, 0);
-        NumberSequenceKeypoint.new(1, 1);
-    })
-
-    trailClone.WidthScale = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 2, 0);
-        NumberSequenceKeypoint.new(1, 1);
-    })
-
-    local bulletMass = bullet:GetMass()
-    local force = Vector3.new(0, bulletMass * (196.2), 0)
-    local bodyForce = Instance.new("BodyForce")
-    bodyForce.Parent = bullet
-
-    bullet.CFrame = CFrame.new(att2.WorldPosition, att2.WorldCFrame.LookVector)
-    bullet:ApplyImpulse(att2.WorldCFrame.LookVector * 2)
-    bodyForce.Force = force
-
-    print(bulletMass, bullet)
-    game.Debris:AddItem(bullet, 1000)
-    task.desynchronize()
+    
+    gun.Handle[`{status}Sound`]:Play()
+    
 end
 
 local function CanShoot(Pos) 
@@ -124,54 +88,53 @@ local function CanShoot(Pos)
 	return true
 end
 
-local function RayCastValidation(origin: Vector3, target: Vector3, range: Number)
-    task.desynchronize()
-
+local function CastRay(origin: Vector3, target: Vector3, range: Number)
     local raycastResult = game.Workspace:Raycast(origin, (target - origin).Unit * range, raycastParams)
 
     return raycastResult
 end
 
 local function Handle(type, inputState:Enum.UserInputState, inputObject: InputObject)
-    task.desynchronize()
+    
     if inputState == Enum.UserInputState.Begin then
         if type == "shoot" then
             local Pos = GetTargetPosition()
 
             if not CanShoot(Pos) then return false end
 
-            local rayCastResult: RaycastResult = RayCastValidation(Settings.Barrel.Position, Pos, 30)
-            if not rayCastResult then return false end
+            local rayCastResult: RaycastResult = CastRay(Settings.Barrel.Position, Pos, 30)
+            
+            if not rayCastResult then 
+                Remotes.ShotFiredEvent:FireServer(nil, nil, Pos, CurrentTool)
+            else
+                Remotes.ShotFiredEvent:FireServer(rayCastResult.Instance.Parent, rayCastResult.Instance, Pos, CurrentTool)
+            end
+            
 
-            print(rayCastResult.Instance.Parent, rayCastResult.Instance)
-
-            task.synchronize()
-            Remotes.ShotFiredEvent:FireServer(rayCastResult.Instance.Parent, rayCastResult.Instance, Pos, CurrentTool)
-            task.desynchronize()
-
+            CreateMuzzleFlash(CurrentTool)
             CreateBullet(CurrentTool)
+            PlaySound(CurrentTool, "Fire")
         end
     end
-    task.synchronize()
+    
 end
 
 -- Torso Movement
-_RNS.RenderStepped:Connect(function(deltaTime)
+--[[_RNS.RenderStepped:Connect(function(deltaTime)
     Motor6D.C0 = Motor6D.C0 * CFrame.Angles(math.asin((Mouse.Hit.Position - Mouse.Origin.Position).Unit.Y), math.asin((Mouse.Hit.Position - Mouse.Origin.Position).Unit.Z), math.asin((Mouse.Hit.Position - Mouse.Origin.Position).Unit.X))
-end)
+end)]]
 
-_RNS.Heartbeat:ConnectParallel(function(deltaTime)
+--[[_RNS.Heartbeat:ConnectParallel(function(deltaTime)
     local tool = GetTool()
-    local CameraCFrame = Camera.CoordinateFrame
 
     if CurrentTool and CurrentTool ~= tool then
-        task.synchronize()
-        --[[if ActiveConnection then
+        
+       if ActiveConnection then
             ActiveConnection:Disconnect()
-        end]]
+        end
         _CNS:UnbindAction("reload", Handle, true, Enum.KeyCode.R, Enum.KeyCode.ButtonR1)
         _CNS:UnbindAction("shoot")
-        task.desynchronize()
+        
 
         CurrentTool = nil
         Settings = nil
@@ -180,19 +143,32 @@ _RNS.Heartbeat:ConnectParallel(function(deltaTime)
     if tool and CurrentTool ~= tool then
         CurrentTool = tool
 
-        task.synchronize()
+        
         raycastParams.FilterDescendantsInstances = {Player.Character or Player.CharacterAdded:Wait(), tool}
         --ActiveConnection = CurrentTool.Activated:Connect()
         Settings = require(tool.GunSettings)
         _CNS:BindAction("reload", Handle, true, Enum.KeyCode.R, Enum.KeyCode.ButtonR1)
         _CNS:BindAction("shoot", Handle, true, Enum.UserInputType.MouseButton1, Enum.KeyCode.ButtonR2)
-        task.desynchronize()
+        
     end
+end)]]
 
-    if CurrentTool then
+for _, gun: Tool in ipairs(_CS:GetTagged("Gun")) do
+    gun.Unequipped:Connect(function()
+        CurrentTool = nil
+        Settings = nil
+        _CNS:UnbindAction("reload")
+        _CNS:UnbindAction("shoot")
+    end)
 
-    end
-end)
+    gun.Equipped:Connect(function()
+        raycastParams.FilterDescendantsInstances = {Player.Character or Player.CharacterAdded:Wait(), gun}
+        Settings = require(gun.GunSettings)
+        CurrentTool = gun
+        _CNS:BindAction("reload", Handle, true, Enum.KeyCode.R, Enum.KeyCode.ButtonR1)
+        _CNS:BindAction("shoot", Handle, true, Enum.UserInputType.MouseButton1, Enum.KeyCode.ButtonR2)
+    end)
+end
 
 Remotes.ShotFiredEvent.OnClientEvent:Connect(function(player: Player, gun, barrelPosition, aimPosition)
     if player == Player then return false end

@@ -45,7 +45,7 @@ function module.PurchaseItem(player: Player, currentCategoryId: string, name: st
     local item = itmTemplate[name]
     local inventory = require(instance:WaitForChild("Inventory"))
     local _, session = aDS:GetSession(player.UserId, "Profile"):await()
-
+    
     if item.Type == "Ammo" then
         local capStatus, _ = session:SetKey({}, "Caps", (session["Structure"]["Caps"] - itmTemplate[name].Value)):await()
         local status, _ = session:SetKey({}, name, (session["Structure"][name] + inventory[currentCategoryId][name]["Quantity"])):await()

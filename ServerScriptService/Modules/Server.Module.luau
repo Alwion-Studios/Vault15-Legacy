@@ -44,15 +44,10 @@ local module = {
 module.__index = module
 
 function module:Initialise()
-  return Promise.new(function(resolve, reject, onCancel)
-    self.version = `{self.branch}_{self.main}.{self.milestone}.{self.patch}_{self.build}_{self.codename}`
-
-    remotes.GetVersionString.OnServerInvoke = function()
-      return self.version
-    end
-
-    resolve(true)
-  end)
+  self.version = `{self.branch}_{self.main}.{self.milestone}.{self.patch}_{self.build}_{self.codename}`
+  remotes.GetVersionString.OnServerInvoke = function()
+    return self.version
+  end
 end
 
 return module
