@@ -118,12 +118,33 @@
                 },
                 "StopSprinting": {
                     "$className": "RemoteEvent"
+                },
+                "GetActiveGroups": {
+                    "$className": "RemoteFunction"
+                },
+                "RequestGroupCreation": {
+                    "$className": "RemoteFunction"
+                },
+                "RequestGroupDeletion": {
+                    "$className": "RemoteFunction"
+                },
+                "RequestToJoinGroup": {
+                    "$className": "RemoteFunction"
+                },
+                "RequestToLeaveGroup": {
+                    "$className": "RemoteFunction"
+                },
+                "RefreshClientGroups": {
+                    "$className": "RemoteEvent"
                 }
             },
 
             "Packages": {
                 "$path": "Packages",
-                "$className": "Folder"
+                "$className": "Folder",
+                "ReplicatedAnimations": {
+                    "$path": "AlwionPackages/ReplicatedAnimations/Main.luau"
+                }
             }
         },
 

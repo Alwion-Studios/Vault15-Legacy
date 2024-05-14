@@ -88,9 +88,29 @@ function module:SwitchGui(guiName: string)
     self.openUI.Instance.Enabled = true
 
     if self.openUI.DisableResets then 
-        assert(coreCall('SetCore', 'ResetButtonCallback', false))
+        local success = false
+
+        while not success do
+            success = pcall(function()
+                assert(coreCall('SetCore', 'ResetButtonCallback', false))
+            end)
+            if success then
+                break
+            end
+            wait(.2)
+        end
     else
-        assert(coreCall('SetCore', 'ResetButtonCallback', true))
+        local success = false
+
+        while not success do
+            success = pcall(function()
+                assert(coreCall('SetCore', 'ResetButtonCallback', true))
+            end)
+            if success then
+                break
+            end
+            wait(.2)
+        end
     end
 
     if self.openUI.DisableRobloxUIs then

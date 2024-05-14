@@ -16,6 +16,8 @@
 local RS = game:GetService("ReplicatedStorage")
 local Controllers = RS.Controllers
 
+require(RS.Packages.ReplicatedAnimations)
+
 -- Controllers
 local render_controller = require(Controllers["Render.Controller"])
 local shop_controller = require(Controllers["Shop.Controller"])
