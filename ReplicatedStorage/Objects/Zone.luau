@@ -12,12 +12,16 @@
                         ©️ 2024
 ]]
 --ROBLOX Service Calls
+local _RNS = game:GetService("RunService")
 local _SSS = game:GetService("ServerScriptService")
 local _SS = game:GetService("ServerStorage")
 local _RS = game:GetService("ReplicatedStorage")
 
 --Imports
 local packages = _RS.Packages
+
+-- Controllers
+local daynight_controller = require(_RS.Controllers["DayNight.Controller"])
 
 -- Imports
 local rpcSdk = require(packages["bloxstrap-rpc-sdk"])
@@ -34,6 +38,10 @@ function Zone:PlayerEntered()
     end
 
     if self.Lighting then
+        if self.DayNightCycle then 
+            coroutine.close(self.DayNightCycle)
+        end
+
         lighting_controller:SetMode(self.Lighting.Value.Name)
     end
 end
@@ -46,7 +54,16 @@ function Zone:PlayerLeft()
     end
 
     if self.Lighting and not self.Parent then
-        lighting_controller:SetMode("Wasteland")
+        -- Handle Lighting Configurations
+        self.DayNightCycle = coroutine.wrap(function()
+            _RNS.Heartbeat:Connect(function()
+                if game.Lighting.ClockTime > 6.5 and game.Lighting.ClockTime < 18 then
+                    lighting_controller:SetMode("WastelandDay", true)
+                else
+                    lighting_controller:SetMode("WastelandNight", true)
+                end
+            end)
+        end)()
     end
 
     if self.ParentZone then

@@ -43,7 +43,7 @@ local blacklistedTypes = {
   ["SkyboxUp"] = true
 }
 
-function module:HandleEffectCreation(effectName, effectValues)
+function module:HandleEffectCreation(effectName, effectValues, slowEffect)
   local newInst
 
   if not Lighting:FindFirstChild(effectName) then
@@ -54,7 +54,7 @@ function module:HandleEffectCreation(effectName, effectValues)
 
   newInst = Lighting:FindFirstChild(effectName)
 
-  task.spawn(function()
+  coroutine.wrap(function()
     for nameValue, newValue in pairs(effectValues) do
       if blacklistedTypes[nameValue] then
         newInst[nameValue] = newValue
@@ -62,12 +62,16 @@ function module:HandleEffectCreation(effectName, effectValues)
       end
   
       --newInst[nameValue] = newValue
-      Tween(newInst, 1, "Sine", "Out", 0, false, {[nameValue] = newValue})
+      if not slowEffect then
+        Tween(newInst, 1, "Sine", "Out", 0, false, {[nameValue] = newValue})
+      else
+        Tween(newInst, 5, "Exponential", "In", 0, false, {[nameValue] = newValue})
+      end
     end
-  end)
+  end)()
 end
 
-function module:SetMode(mode: string)
+function module:SetMode(mode: string, calm: BoolValue)
   if not self.Modes[mode] then return false end
 
   self.CurrentMode = mode
@@ -79,7 +83,7 @@ function module:SetMode(mode: string)
   end
 
   for name, values in pairs(self.Modes[mode]) do
-    self:HandleEffectCreation(name, values)
+    self:HandleEffectCreation(name, values, calm)
   end
 end
 
@@ -90,7 +94,6 @@ function module:Initialise()
     inst:Destroy()
   end
 
-  self.CurrentMode = "Wasteland"
   lightingInitialisedRemote:Fire()
 end
 
