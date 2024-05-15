@@ -136,6 +136,9 @@
                 },
                 "RefreshClientGroups": {
                     "$className": "RemoteEvent"
+                },
+                "TimeSyncFunction": {
+                    "$className": "RemoteFunction"
                 }
             },
 

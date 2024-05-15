@@ -106,7 +106,7 @@ function Door:Open()
         instance.CanQuery = false
     end
 
-    coroutine.wrap(function()
+    --[[coroutine.wrap(function()
         if self.Category == "VaultInteriorDoor" then
             local anim1 = ReplicatedAnimations:Create(self.Instance.Up.PrimaryPart, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out, 0, false, 0), {CFrame = self.Positions["Open"]["Up"]})
             local anim2 = ReplicatedAnimations:Create(self.Instance.Down.PrimaryPart, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out, 0, false, 0), {CFrame = self.Positions["Open"]["Down"]})
@@ -126,10 +126,10 @@ function Door:Open()
             task.wait(1.25)
             anim1:Destroy()
         end
-    end)()
+    end)()]]
 
     self.IsOpen = true
-    --Remotes.DoorTrigger:FireAllClients(self.Instance, self.Positions["Open"])
+    Remotes.DoorTrigger:FireAllClients(self.Instance, self.Positions["Open"])
     return true
 end
 
@@ -177,7 +177,7 @@ function Door:Close()
         instance.CanQuery = false
     end
 
-    coroutine.wrap(function()
+    --[[coroutine.wrap(function()
         if self.Category == "VaultInteriorDoor" then
             local anim1 = ReplicatedAnimations:Create(self.Instance.Up.PrimaryPart, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.In, 0, false, 0), {CFrame = self.Positions["Closed"]["Up"]})
             local anim2 = ReplicatedAnimations:Create(self.Instance.Down.PrimaryPart, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.In, 0, false, 0), {CFrame = self.Positions["Closed"]["Down"]})
@@ -200,10 +200,10 @@ function Door:Close()
             task.wait(1.25)
             anim1:Destroy()
         end
-    end)()
+    end)()]]
 
     self.IsOpen = false
-    --Remotes.DoorTrigger:FireAllClients(self.Instance, self.Positions["Closed"], true)
+    Remotes.DoorTrigger:FireAllClients(self.Instance, self.Positions["Closed"], true)
     return true
 end
 

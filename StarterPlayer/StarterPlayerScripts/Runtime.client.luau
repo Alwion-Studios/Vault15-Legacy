@@ -30,6 +30,7 @@ local ui_controller = require(Controllers["UI.Controller"])
 local playerGui_controller = require(Controllers["PlayerGui.Controller"])
 local movement_engine = require(Controllers["MovementEngine.Controller"])
 local overhead_ui = require(Controllers["Overhead.Controller"])
+local daynight_controller = require(Controllers["DayNight.Controller"])
 
 -- Initialise Controllers
 --shopGui_controller:Initialise()
@@ -43,3 +44,4 @@ notification_controller:Initialise()
 shop_controller:Initialise()
 movement_engine:Initialise()
 overhead_ui:Initialise()
+daynight_controller:Initialise()
