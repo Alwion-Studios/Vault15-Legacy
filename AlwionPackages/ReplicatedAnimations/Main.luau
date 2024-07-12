@@ -11,10 +11,6 @@
                   ALL RIGHTS RESERVED
                         ©️ 2024
 ]]
---[[
-    WRITTEN WITH ASSITANCE FROM CLOUDYY'S REPOSITORY
-    https://github.com/cloud-yy/roblox-replicated-tween-service/
-]]
 
 -- Roblox Imports
 local _TS = game:GetService("TweenService")

@@ -33,7 +33,7 @@ function module:Initialise()
     local localTime
 
     coroutine.wrap(function()
-        localTime = remotes.TimeSyncFunction:InvokeServer() - os.clock() + (game.Players.LocalPlayer:GetNetworkPing() / 2)
+        localTime = workspace:GetServerTimeNow() + (game.Players.LocalPlayer:GetNetworkPing() / 2)
 
         _RNS.Heartbeat:Connect(function()
             local currentTime = (os.clock() + localTime) * 0.025 % 24
