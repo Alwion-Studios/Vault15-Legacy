@@ -1,3 +1,5 @@
+--!nonstrict
+
 --[[
      █████  ██      ██     ██ ██  ██████  ███    ██ 
     ██   ██ ██      ██     ██ ██ ██    ██ ████   ██ 
@@ -9,23 +11,37 @@
                   ALL RIGHTS RESERVED
                         ©️ 2024
 ]]
+--Roblox API Calls
+local _RS = game:GetService("ReplicatedStorage")
+local _RNS = game:GetService("RunService")
 
--- ROBLOX API
-local ServerStorage = game:GetService("ServerStorage")
+-- Modules
+local lighting_controller = require(_RS.Controllers["Lighting.Controller"])
 
--- Imports
-local aDS = require(ServerStorage:WaitForChild("aDS").Objects:WaitForChild("Schema.Object"))
+-- Remotes
+local remotes = _RS.Remotes
 
-local UserInfo = aDS.Create("Profile", {
-  Caps = 15,
-  Bullet = 0,
-  PlasmaCell = 0,
-  FusionCell = 0,
-  Level = 1,
-  Experience = 0,
-  CodesRedeemed = {},
-  Inventory = {},
-  LastCollect = 0,
-  LastStreak = 0,
-}, {})
-return UserInfo
+local module = {
+
+}
+
+function module:ReturnCurrentTime()
+    
+end
+
+function module:Initialise()
+    local localTime
+
+    coroutine.wrap(function()
+        localTime = workspace:GetServerTimeNow() + (game.Players.LocalPlayer:GetNetworkPing() / 2)
+
+        _RNS.Heartbeat:Connect(function()
+            local currentTime = (os.clock() + localTime) * 0.025 % 24
+            game.Lighting.ClockTime = currentTime
+        end)
+    end)()
+
+    return true
+end
+
+return module

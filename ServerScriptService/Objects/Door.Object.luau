@@ -21,6 +21,7 @@ local PS = game:GetService("Players")
 --Imports
 local SignObj = require(script.Parent["Sign.Object"])
 local Remotes = RS:WaitForChild("Remotes")
+local ReplicatedAnimations = require(RS.Packages.ReplicatedAnimations)
 
 --Stores
 local stores = _SS:WaitForChild("DoorStorage")
@@ -105,6 +106,28 @@ function Door:Open()
         instance.CanQuery = false
     end
 
+    --[[coroutine.wrap(function()
+        if self.Category == "VaultInteriorDoor" then
+            local anim1 = ReplicatedAnimations:Create(self.Instance.Up.PrimaryPart, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out, 0, false, 0), {CFrame = self.Positions["Open"]["Up"]})
+            local anim2 = ReplicatedAnimations:Create(self.Instance.Down.PrimaryPart, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out, 0, false, 0), {CFrame = self.Positions["Open"]["Down"]})
+            anim1:Play()
+            anim2:Play()
+            task.wait(1)
+            anim1:Destroy()
+            anim2:Destroy()
+        elseif self.Category == "VaultBorderDoor" then
+            local anim1 = ReplicatedAnimations:Create(self.Instance.PrimaryPart, TweenInfo.new(.65, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out, 0, false, 0), {CFrame = self.Positions["Open"]["Left"]})
+            anim1:Play()
+            task.wait(.65)
+            anim1:Destroy()
+        elseif self.Category == "VaultBorderDoor2" then
+            local anim1 = ReplicatedAnimations:Create(self.Instance.PrimaryPart, TweenInfo.new(1.25, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out, 0, false, 0), {CFrame = self.Positions["Open"]["Down"]})
+            anim1:Play()
+            task.wait(1.25)
+            anim1:Destroy()
+        end
+    end)()]]
+
     self.IsOpen = true
     Remotes.DoorTrigger:FireAllClients(self.Instance, self.Positions["Open"])
     return true
@@ -153,6 +176,31 @@ function Door:Close()
         instance.CanTouch = false
         instance.CanQuery = false
     end
+
+    --[[coroutine.wrap(function()
+        if self.Category == "VaultInteriorDoor" then
+            local anim1 = ReplicatedAnimations:Create(self.Instance.Up.PrimaryPart, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.In, 0, false, 0), {CFrame = self.Positions["Closed"]["Up"]})
+            local anim2 = ReplicatedAnimations:Create(self.Instance.Down.PrimaryPart, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.In, 0, false, 0), {CFrame = self.Positions["Closed"]["Down"]})
+            anim1:Play()
+            anim2:Play()
+            print(anim1, anim2, self.Positions["Closed"])
+            task.wait(1)
+            anim1:Destroy()
+            anim2:Destroy()
+        elseif self.Category == "VaultBorderDoor" then
+            local anim1 = ReplicatedAnimations:Create(self.Instance.PrimaryPart, TweenInfo.new(.65, Enum.EasingStyle.Exponential, Enum.EasingDirection.In, 0, false, 0), {CFrame = self.Positions["Closed"]["Left"]})
+            anim1:Play()
+            print(anim1, self.Positions["Closed"])
+            task.wait(.65)
+            anim1:Destroy()
+        elseif self.Category == "VaultBorderDoor2" then
+            local anim1 = ReplicatedAnimations:Create(self.Instance.PrimaryPart, TweenInfo.new(1.25, Enum.EasingStyle.Exponential, Enum.EasingDirection.In, 0, false, 0), {CFrame = self.Positions["Closed"]["Down"]})
+            anim1:Play()
+            print(anim1, self.Positions["Closed"])
+            task.wait(1.25)
+            anim1:Destroy()
+        end
+    end)()]]
 
     self.IsOpen = false
     Remotes.DoorTrigger:FireAllClients(self.Instance, self.Positions["Closed"], true)

@@ -10,44 +10,31 @@
                         ©️ 2024
 ]]
 
--- ROBLOX API
+--ROBLOX Service Calls
+local CAS = game:GetService("ContextActionService")
 local PS = game:GetService("Players")
 local RS = game:GetService("ReplicatedStorage")
-local MSS = game:GetService("MemoryStoreService")
-local HTTP = game:GetService("HttpService")
 
--- Packages
-local Packages = RS.Packages
-local Promise = require(Packages.Promise)
+-- Module Imports
+local remotes = RS:WaitForChild("Remotes")
 
--- Remotes
-local remotes = RS.Remotes
+-- Player
+local player = PS.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hum = character:WaitForChild("Humanoid")
 
--- Variabbles
-local ServerKey
+local movement_engine = {}
 
-if game:GetService("RunService"):IsStudio() then ServerKey = "TEST" else ServerKey = tostring(game.JobId) end
-
---Memory Stores
-local ServerIndexMap = MSS:GetSortedMap("ServerIndex")
-
--- Module
-local module = {
-  -- Version Control
-  branch = "tb",
-  build = game.PlaceVersion,
-  main = 1,
-  milestone = 0,
-  patch = 0,
-  codename="whistler"
-}
-module.__index = module
-
-function module:Initialise()
-  self.version = `{self.branch}_{self.main}.{self.milestone}.{self.patch}_{self.build}_{self.codename}`
-  remotes.GetVersionString.OnServerInvoke = function()
-    return self.version
-  end
+function movement_engine.Handle(stance, inputState:Enum.UserInputState, inputObject: InputObject)
+    if stance == "sprint" and inputState == Enum.UserInputState.Begin then
+        remotes.StartSprinting:FireServer()
+    elseif stance == "sprint" and inputState == Enum.UserInputState.End then
+        remotes.StopSprinting:FireServer()
+    end
 end
 
-return module
+function movement_engine:Initialise()
+    CAS:BindAction("sprint", self.Handle, true, Enum.KeyCode.LeftShift)
+end
+
+return movement_engine

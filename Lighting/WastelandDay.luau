@@ -1,11 +1,11 @@
 local module = {
 	["Atmosphere"] = {
 		["Density"] = 0.362,
-		["Offset"] = 0.462,
+		["Offset"] = 0,
 		["Color"] = Color3.fromRGB(124, 123, 123),
 		["Decay"] = Color3.fromRGB(45, 92, 90),
 		["Glare"] = 0,
-		["Haze"] = 2.12
+		["Haze"] = 1.12
 	},
 	
 	["Sky"] = {
@@ -19,9 +19,9 @@ local module = {
 	
 	["ColorCorrectionEffect"] = {
 		["Brightness"] = 0.1,
-		["Contrast"] = 0.321,
+		["Contrast"] = 0,
 		["Saturation"] = 0.1,
-		["TintColor"] = Color3.fromRGB(150, 146, 131)
+		["TintColor"] = Color3.fromRGB(225, 215, 198)
 	}
 }
 

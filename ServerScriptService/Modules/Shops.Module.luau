@@ -45,8 +45,13 @@ function module.PurchaseItem(player: Player, currentCategoryId: string, name: st
     local item = itmTemplate[name]
     local inventory = require(instance:WaitForChild("Inventory"))
     local _, session = aDS:GetSession(player.UserId, "Profile"):await()
-
+    
     if item.Type == "Ammo" then
+        if not inventory[currentCategoryId] or not inventory[currentCategoryId][name] or not inventory[currentCategoryId][name]["Quantity"] then 
+            notifyRemote:FireClient(player, "Failed Purchase", `An error occured while trying to process this transaction. Try again!`)
+            return false 
+        end
+
         local capStatus, _ = session:SetKey({}, "Caps", (session["Structure"]["Caps"] - itmTemplate[name].Value)):await()
         local status, _ = session:SetKey({}, name, (session["Structure"][name] + inventory[currentCategoryId][name]["Quantity"])):await()
         if capStatus and status then

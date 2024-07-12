@@ -1,3 +1,5 @@
+--!nonstrict
+
 --[[
      █████  ██      ██     ██ ██  ██████  ███    ██ 
     ██   ██ ██      ██     ██ ██ ██    ██ ████   ██ 
@@ -9,23 +11,22 @@
                   ALL RIGHTS RESERVED
                         ©️ 2024
 ]]
+--ROBLOX Service Calls
+local _SS = game:GetService("ServerScriptService")
+local _CS = game:GetService("CollectionService")
+local _RS = game:GetService("ReplicatedStorage")
+local _SSS = game:GetService("ServerStorage")
 
--- ROBLOX API
-local ServerStorage = game:GetService("ServerStorage")
+--Imports
+local Remotes = _RS.Remotes
 
--- Imports
-local aDS = require(ServerStorage:WaitForChild("aDS").Objects:WaitForChild("Schema.Object"))
+local module = {}
+module.__index = module
 
-local UserInfo = aDS.Create("Profile", {
-  Caps = 15,
-  Bullet = 0,
-  PlasmaCell = 0,
-  FusionCell = 0,
-  Level = 1,
-  Experience = 0,
-  CodesRedeemed = {},
-  Inventory = {},
-  LastCollect = 0,
-  LastStreak = 0,
-}, {})
-return UserInfo
+function module:Initialise()
+  Remotes.TimeSyncFunction.OnServerInvoke = function(_)
+    return os.clock()
+  end
+end
+
+return module

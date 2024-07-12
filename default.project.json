@@ -6,8 +6,35 @@
         "ReplicatedStorage": {
             "$className": "ReplicatedStorage",
             "$ignoreUnknownInstances": true,
-            "$path": "ReplicatedStorage",
-            
+
+            "Controllers": {
+                "$className": "Folder",
+                "$path": "ReplicatedStorage/Controllers"
+            },
+
+            "Formatting": {
+                "$className": "Folder",
+                "$path": "ReplicatedStorage/Formatting"
+            },
+
+            "Functions": {
+                "$className": "Folder",
+                "$path": "ReplicatedStorage/Functions"
+            },
+
+            "Objects": {
+                "$className": "Folder",
+                "$path": "ReplicatedStorage/Objects"
+            },
+
+            "ItemData": {
+                "$path": "ReplicatedStorage/ItemData.luau"
+            },
+
+            "Types": {
+                "$path": "ReplicatedStorage/Types.luau"
+            },
+
             "Remotes": {
                 "$className": "Folder",
 
@@ -38,13 +65,13 @@
                 "SignTrigger": {
                     "$className": "RemoteEvent"
                 },
-                "FireWeapon": {
-                    "$className": "RemoteEvent"
-                },
                 "ReloadWeapon": {
                     "$className": "RemoteEvent"
                 },
-                "ShotFired": {
+                "ShotFiredEvent": {
+                    "$className": "RemoteEvent"
+                },
+                "ClientFiredEvent": {
                     "$className": "RemoteEvent"
                 },
                 "HitMarker": {
@@ -85,12 +112,42 @@
                 },
                 "MouseClickEvent": {
                     "$className": "BindableEvent"
+                },
+                "StartSprinting": {
+                    "$className": "RemoteEvent"
+                },
+                "StopSprinting": {
+                    "$className": "RemoteEvent"
+                },
+                "GetActiveGroups": {
+                    "$className": "RemoteFunction"
+                },
+                "RequestGroupCreation": {
+                    "$className": "RemoteFunction"
+                },
+                "RequestGroupDeletion": {
+                    "$className": "RemoteFunction"
+                },
+                "RequestToJoinGroup": {
+                    "$className": "RemoteFunction"
+                },
+                "RequestToLeaveGroup": {
+                    "$className": "RemoteFunction"
+                },
+                "RefreshClientGroups": {
+                    "$className": "RemoteEvent"
+                },
+                "TimeSyncFunction": {
+                    "$className": "RemoteFunction"
                 }
             },
 
             "Packages": {
                 "$path": "Packages",
-                "$className": "Folder"
+                "$className": "Folder",
+                "ReplicatedAnimations": {
+                    "$path": "AlwionPackages/ReplicatedAnimations/Main.luau"
+                }
             }
         },
 
@@ -118,6 +175,11 @@
             },
 
             "$path": "ServerStorage"
+        },
+
+        "StarterGui": {
+            "$ignoreUnknownInstances": true,
+            "$path": "StarterGui"
         },
 
         "StarterPlayer": {

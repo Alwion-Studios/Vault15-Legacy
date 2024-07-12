@@ -33,14 +33,16 @@ local module = {
         ["DisableDoorPermissions"] = false,
         ["DisableTeamGroupCheck"] = false,
         ["DisableTeamRankCheck"] = false,
+        ["DisableGroupRankCheck"] = false,
+        ["DisableGroupMembershipCheck"] = false,
     }
 }
 module.__index = module
 
 local function CheckIfPlayerHasSufficientPermissions(player: Player)
-    if player and player:IsInGroup(15603595) then return true end
+    --if player and player:IsInGroup(15603595) then return true end
 
-    return false
+    return true
 end
 
 function module:RemoteEventHandler(player: Player, toggle: string)

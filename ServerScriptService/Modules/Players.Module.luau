@@ -14,6 +14,7 @@
 local RS = game:GetService("ReplicatedStorage")
 local TS = game:GetService("Teams")
 local BS = game:GetService("BadgeService")
+local _CS = game:GetService("CollectionService")
 
 -- Remotes
 local remotes = RS:WaitForChild("Remotes")
@@ -41,9 +42,12 @@ players.__index = players
 function players.HandleJoin(player: Player)
   -- Make sure they're in the alwion studios group
 
-  --[[if player:GetRankInGroup(15603595) < 2 or false then
+  player:SetAttribute("PVP", false)
+  player:SetAttribute("Stamina", 100)
+
+  if (not game:GetService("RunService"):IsStudio()) and (player:GetRankInGroup(15603595) < 2 or false) then
     player:Kick("DEV-LOCK: You're not a developer or QA!")
-  end]]
+  end
 
   -- Award BETA Badge
   pcall(function()
@@ -60,15 +64,18 @@ function players.HandleJoin(player: Player)
   aDS_Handler:OnJoin(player)
 
   -- Disable CanCollide, CanQuery and CanTouch for all accessories
-  local character = player.Character or player.CharacterAdded:Wait()
-  
-  for _, part: Accessory in pairs(character:GetChildren()) do
-    if not part:IsA("Accessory") then continue end
-    part = part:WaitForChild("Handle")
-    part.CanCollide = false
-    part.CanTouch = false
-    part.CanQuery = false
-  end
+  player.CharacterAdded:Connect(function(character)
+    for _, part: Accessory in pairs(character:GetDescendants()) do
+      if not part:IsA("Accessory") then continue end
+      if part:IsA("ParticleEmitter") then 
+        _CS:AddTag(part, "ParticleEmitter")
+      end
+      part = part:WaitForChild("Handle")
+      part.CanCollide = false
+      part.CanTouch = false
+      part.CanQuery = false
+    end
+  end)
 end
 
 function players:Initialise()
@@ -90,14 +97,6 @@ function players:Initialise()
     print(`{player.Name} has joined {teamName}`)
     player.Team = team
     player:LoadCharacter()
-
-    for _, part: Accessory in pairs(player.Character:GetChildren()) do
-      if not part:IsA("Accessory") then continue end
-      part = part:WaitForChild("Handle")
-      part.CanCollide = false
-      part.CanTouch = false
-      part.CanQuery = false
-    end
     
     return true
   end
